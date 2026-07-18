@@ -1,0 +1,6 @@
+U-Boot loader and related files for the FriendlyELEC NanoPi-R5C
+
+To install this bootloader on an sdcard or eMMC just do:
+
+dd if=/usr/local/share/u-boot/u-boot-nanopi-r5c/idbloader.img of=/path/to/device seek=64 bs=512 conv=sync
+dd if=/usr/local/share/u-boot/u-boot-nanopi-r5c/u-boot.itb of=/path/to/device seek=16384 bs=512 conv=sync

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2017-2022 Franco Fichtner <franco@opnsense.org>
+# Copyright (c) 2017-2025 Franco Fichtner <franco@opnsense.org>
 # Copyright (c) 2015-2017 The FreeBSD Foundation
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,21 +32,21 @@ SELF=arm
 
 . ./common.sh
 
-if [ ${PRODUCT_ARCH} != armv6 -a ${PRODUCT_ARCH} != armv7 -a ${PRODUCT_ARCH} != aarch64 ]; then
+if [ ${PRODUCT_ARCH} != aarch64 ]; then
 	echo ">>> Cannot build arm image with arch ${PRODUCT_ARCH}"
 	exit 1
 fi
 
 check_image ${SELF} ${@}
 
-ARMSIZE="3G"
+ARMSIZE="5G"
 
 if [ -n "${1}" ]; then
 	ARMSIZE=${1}
 fi
 
-ARMIMG="${IMAGESDIR}/${PRODUCT_RELEASE}-arm-${PRODUCT_ARCH}-${PRODUCT_DEVICE}.img"
-ARMLABEL="${PRODUCT_NAME}"
+ARMIMG="${IMAGESDIR}/${PRODUCT_RELEASE}-arm-${PRODUCT_ARCH}${PRODUCT_DEVICE+"-${PRODUCT_DEVICE}"}.img"
+ARMLABEL="${PRODUCT_NAME}_ARM"
 
 sh ./clean.sh ${SELF}
 
@@ -80,10 +80,7 @@ else
  gpart add -b 8m -s 8m -t linux-data -l uboot ${DEV}
 
  gpart add -t efi -a 512k -s ${ARM_FAT_SIZE} ${DEV}
-# gpart set -a active -i 1 ${DEV}
  newfs_msdos -L msdosboot -F 16 /dev/${DEV}p3
- #gpart add -t freebsd ${DEV}
- #gpart create -s bsd ${DEV}s2
  gpart add -t freebsd-ufs -a 64k /dev/${DEV}
  newfs -U -L ${ARMLABEL} /dev/${DEV}p4
  mount /dev/${DEV}p4 ${STAGEDIR}
@@ -117,13 +114,11 @@ arm_mount()
 {
     # Test if need GPT disk table
     if [ -z ${DISK_TABLE} ]; then
-
 	mount /dev/${DEV}s2a ${STAGEDIR}
 	mount_msdosfs /dev/${DEV}s1 ${STAGEDIR}/boot/msdos
     else
 	mount /dev/${DEV}p4 ${STAGEDIR}
 	mount_msdosfs /dev/${DEV}p3 ${STAGEDIR}/boot/msdos
-    
     fi
 }
 
