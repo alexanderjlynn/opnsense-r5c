@@ -15,6 +15,7 @@ UTM_REMOTE_DIR=${UTM_REMOTE_DIR:-/root/opnsense-r5c-build}
 UTM_ARTIFACT_DIR=${UTM_ARTIFACT_DIR:-}
 UTMCTL=${UTMCTL:-/Applications/UTM.app/Contents/MacOS/utmctl}
 RELEASE=
+KEEP_RAW=no
 SSH_STATE_DIR=
 CONTROL_PATH=
 PARTIAL_FILE=
@@ -23,10 +24,14 @@ CAFFEINATE_PID=
 usage()
 {
 	cat <<EOF
-Usage: ./build-r5c-utm.sh [options] [OPNSENSE_RELEASE]
+Usage: ./build-r5c-utm.sh [options] [OPNSENSE_RELEASE [GUEST_IP]]
 
 Start a UTM FreeBSD VM, copy this checkout into it, run all R5C build stages,
 and copy a compressed image back to macOS.  The default is ${DEFAULT_RELEASE}.
+
+The simplest reliable form when the VM prints its address is:
+
+  ./build-r5c-utm.sh ${DEFAULT_RELEASE} 192.168.65.3
 
 Options:
   --vm NAME          UTM VM name or UUID (default: ${UTM_VM})
@@ -35,6 +40,7 @@ Options:
   --user USER        Guest SSH user; it must be root (default: root)
   --identity FILE    SSH private key
   --artifact-dir DIR Store the finished image here
+  --keep-raw         Also copy the uncompressed .img (useful for flashing)
   -h, --help         Show this help
 
 Environment variables with the same names as the defaults above are also
@@ -102,6 +108,10 @@ while [ "$#" -gt 0 ]; do
 		UTM_ARTIFACT_DIR=$2
 		shift 2
 		;;
+	--keep-raw)
+		KEEP_RAW=yes
+		shift
+		;;
 	-h|--help)
 		usage
 		exit 0
@@ -114,8 +124,13 @@ while [ "$#" -gt 0 ]; do
 		die "unknown option: $1"
 		;;
 	*)
-		[ -z "${RELEASE}" ] || die "only one OPNsense release may be supplied"
-		RELEASE=$1
+		if [ -z "${RELEASE}" ]; then
+			RELEASE=$1
+		elif [ -z "${UTM_GUEST_HOST}" ]; then
+			UTM_GUEST_HOST=$1
+		else
+			die "unexpected argument: $1"
+		fi
 		shift
 		;;
 	esac
@@ -152,7 +167,7 @@ fi
 [ "$(uname -m)" = arm64 ] || die "this launcher expects an Apple-silicon Mac"
 [ -x "${UTMCTL}" ] || die "utmctl was not found at ${UTMCTL}"
 [ -d "${BUILD_DIR}" ] || die "arm64-opnsense-build was not found beside this script"
-for REQUIRED_COMMAND in awk caffeinate mktemp nc shasum ssh stat tar; do
+for REQUIRED_COMMAND in awk caffeinate mktemp nc shasum ssh stat tar tee; do
 	command -v "${REQUIRED_COMMAND}" >/dev/null 2>&1 || die "required macOS command is missing: ${REQUIRED_COMMAND}"
 done
 
@@ -245,20 +260,37 @@ esac
 
 echo "==> Copying build files to ${SSH_TARGET}:${UTM_REMOTE_DIR}"
 ssh "${SSH_OPTIONS[@]}" "${SSH_TARGET}" "mkdir -p '${UTM_REMOTE_DIR}'"
-tar -C "${SCRIPT_DIR}" --exclude=.git -czf - . | \
+# Never send prior multi-gigabyte results back into the VM on a retry.
+COPYFILE_DISABLE=1 tar -C "${SCRIPT_DIR}" --exclude=.git \
+    --exclude=build-artifacts \
+    --no-acls --no-fflags --no-mac-metadata --no-xattrs -czf - . | \
     ssh "${SSH_OPTIONS[@]}" "${SSH_TARGET}" "tar -xzf - -C '${UTM_REMOTE_DIR}'"
 
-echo "==> Starting the complete R5C build for OPNsense ${RELEASE}"
-echo "==> The VM will remain running when the build finishes or fails."
-ssh "${SSH_OPTIONS[@]}" "${SSH_TARGET}" \
-    "cd '${UTM_REMOTE_DIR}/arm64-opnsense-build' && exec sh ./build-r5c.sh '${RELEASE}'"
-
+# Create the local artifact directory before starting the long build.  tee and
+# pipefail preserve the complete diagnostic output on macOS without hiding the
+# remote build's exit status, so a failed unattended run remains actionable.
 SERIES=$(printf '%s\n' "${RELEASE}" | awk -F. '{ print $1 "." $2 }')
 IMAGE_BASENAME="OPNsense-${RELEASE}-arm-aarch64-R5C_UBOOT.img"
 REMOTE_IMAGE_DIR="/usr/local/opnsense/build/${SERIES}/aarch64/images"
 REMOTE_IMAGE="${REMOTE_IMAGE_DIR}/${IMAGE_BASENAME}"
 ARTIFACT_DIR=${UTM_ARTIFACT_DIR:-${SCRIPT_DIR}/build-artifacts/${RELEASE}}
+BUILD_LOG="${ARTIFACT_DIR}/build-${RELEASE}.log"
 mkdir -p "${ARTIFACT_DIR}"
+
+echo "==> Starting the complete R5C build for OPNsense ${RELEASE}"
+echo "==> The VM will remain running when the build finishes or fails."
+ssh "${SSH_OPTIONS[@]}" "${SSH_TARGET}" \
+    "cd '${UTM_REMOTE_DIR}/arm64-opnsense-build' && exec sh ./build-r5c.sh '${RELEASE}'" \
+    2>&1 | tee "${BUILD_LOG}"
+
+if [ "${KEEP_RAW}" = yes ]; then
+	echo "==> Copying the uncompressed R5C image back to macOS"
+	PARTIAL_FILE="${ARTIFACT_DIR}/${IMAGE_BASENAME}.partial"
+	ssh "${SSH_OPTIONS[@]}" "${SSH_TARGET}" \
+	    "test -s '${REMOTE_IMAGE}' && cat '${REMOTE_IMAGE}'" > "${PARTIAL_FILE}"
+	mv "${PARTIAL_FILE}" "${ARTIFACT_DIR}/${IMAGE_BASENAME}"
+	PARTIAL_FILE=
+fi
 
 echo "==> Compressing and copying the R5C image back to macOS"
 PARTIAL_FILE="${ARTIFACT_DIR}/${IMAGE_BASENAME}.xz.partial"
@@ -285,7 +317,14 @@ fi
 
 echo
 echo "Build and transfer complete:"
-ls -lh "${ARTIFACT_DIR}/${IMAGE_BASENAME}.xz" \
-    "${ARTIFACT_DIR}/${IMAGE_BASENAME}.xz.sha256" \
-    "${ARTIFACT_DIR}/${IMAGE_BASENAME}.sig"
+OUTPUT_FILES=(
+	"${ARTIFACT_DIR}/${IMAGE_BASENAME}.xz"
+	"${ARTIFACT_DIR}/${IMAGE_BASENAME}.xz.sha256"
+	"${ARTIFACT_DIR}/${IMAGE_BASENAME}.sig"
+)
+if [ "${KEEP_RAW}" = yes ]; then
+	OUTPUT_FILES+=("${ARTIFACT_DIR}/${IMAGE_BASENAME}")
+fi
+ls -lh "${OUTPUT_FILES[@]}"
+echo "Build log: ${BUILD_LOG}"
 echo "You can now shut down and delete the UTM VM."

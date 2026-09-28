@@ -1,0 +1,944 @@
+Warning: Permanently added '192.168.65.3' (ED25519) to the list of known hosts.
+>>> Executing build step base on 26.7
+ABI_FILE=/usr/lib/crt1.o
+BLOCKSIZE=K
+CONFIGDIR=/usr/tools/config/26.7
+CONFIG_XML=/usr/local/etc/config.xml
+COREBRANCH=stable/26.7
+COREDIR=/usr/core
+COREENV=CORE_PHP=85 CORE_ABI=26.7 CORE_PYTHON=313
+CPUS=8
+DEVICE=ARM64
+DEVICEDIR=/usr/tools/device
+ENV_FILTER=env -i USER=root LOGNAME=root HOME=/root SHELL=/bin/sh BLOCKSIZE=K MAIL=/var/mail/root PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/root/bin TERM=su HOSTTYPE= VENDOR= OSTYPE= MACHTYPE= PWD=/usr/tools/build GROUP= HOST= EDITOR= PAGER= ABI_FILE=/usr/lib/crt1.o
+EXTRABRANCH=
+HOME=/root
+IMAGESDIR=/usr/local/opnsense/build/26.7/aarch64/images
+LANG=C.UTF-8
+LOGNAME=root
+LOGSDIR=/usr/local/opnsense/build/26.7/aarch64/logs
+MAIL=/var/mail/root
+MAKEFLAGS= DEVICE=ARM64 PORTSENV=DEPEND=no\ PRUNE=no VERSION=26.7.4
+MAKELEVEL=1
+META_MODE=normal
+MM_CHARSET=UTF-8
+OLDPWD=/usr/obj/usr/tools
+PACKAGESDIR=/.pkg
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/root/bin
+PLUGINSBRANCH=stable/26.7
+PLUGINSDIR=/usr/plugins
+PLUGINSENV=PLUGIN_PHP=85 PLUGIN_ABI=26.7 PLUGIN_PYTHON=313
+PORTSBRANCH=master
+PORTSDIR=/usr/ports
+PORTSENV=DEPEND=no PRUNE=no
+PORTSREFBRANCH=main
+PORTSREFDIR=/usr/freebsd-ports
+PORTSREFURL=https://git.FreeBSD.org/ports.git
+PRINT_ENV_SKIP=1
+PRODUCT_ABI=26.7
+PRODUCT_ADDITIONS=
+PRODUCT_APACHE=24
+PRODUCT_ARCH=aarch64
+PRODUCT_COMSPEED=115200
+PRODUCT_CORE=opnsense
+PRODUCT_CORES=opnsense opnsense-devel opnsense-business
+PRODUCT_DEBUG=
+PRODUCT_DEVEL=
+PRODUCT_DEVICE_REAL=ARM64
+PRODUCT_GITBASE=https://github.com/opnsense
+PRODUCT_HOST=aarch64
+PRODUCT_KERNEL=SMP-ARM
+PRODUCT_LUA=5.4
+PRODUCT_MIRROR=https://mirror.ams1.nl.leaseweb.net/opnsense
+PRODUCT_NAME=OPNsense
+PRODUCT_PERL=5.42
+PRODUCT_PHP=85
+PRODUCT_PLUGIN=os-*
+PRODUCT_PLUGINS=os-*
+PRODUCT_PRIVKEY=/usr/tools/config/26.7/repo.key
+PRODUCT_PUBKEY=/usr/tools/config/26.7/repo.pub
+PRODUCT_PYTHON=313
+PRODUCT_RELEASE=OPNsense-26.7.4
+PRODUCT_RUBY=33
+PRODUCT_SETTINGS=26.7
+PRODUCT_SIGNCHK=/usr/tools/scripts/pkg_fingerprint.sh /usr/tools/config/26.7/repo.pub
+PRODUCT_SIGNCMD=/usr/tools/scripts/pkg_sign.sh /usr/tools/config/26.7/repo.pub /usr/tools/config/26.7/repo.key
+PRODUCT_SSL=openssl35
+PRODUCT_SUFFIX=
+PRODUCT_TARGET=arm64
+PRODUCT_TYPE=opnsense
+PRODUCT_UEFI=arm dvd serial vga vm
+PRODUCT_VERSION=26.7.4
+PRODUCT_WANTS_CROSS=aarch64-binutils qemu-user-static
+PRODUCT_ZFS_ALLOWED=
+PRODUCT_ZFS_REQUESTED=
+PWD=/usr/tools/build
+REMOTEDIR=
+SERVER=user@does.not.exist
+SETSDIR=/usr/local/opnsense/build/26.7/aarch64/sets
+SHELL=/bin/sh
+SRCABI=FreeBSD:15:aarch64
+SRCBRANCH=stable/26.7
+SRCDIR=/usr/src
+SRCREVISION=15.1
+SSH_CLIENT=192.168.65.1 63180 22
+SSH_CONNECTION=192.168.65.1 63180 192.168.65.3 22
+STAGEDIR=/usr/obj/usr/tools/config/26.7/aarch64
+STAGEDIRPREFIX=/usr/obj
+TARGETDIR=/usr/local/opnsense/build/26.7/aarch64
+TARGETDIRPREFIX=/usr/local/opnsense/build
+TERM=su
+TOOLSBRANCH=master
+TOOLSDIR=/usr/tools
+USER=root
+VERSION=26.7.4
+>>> Running build step: base
+>>> Passing arguments: (none)
+>>> Reusing base set: /usr/local/opnsense/build/26.7/aarch64/sets/base-26.7.4-aarch64.txz
+>>> Executing build step ports on 26.7
+ABI_FILE=/usr/lib/crt1.o
+BLOCKSIZE=K
+CONFIGDIR=/usr/tools/config/26.7
+CONFIG_XML=/usr/local/etc/config.xml
+COREBRANCH=stable/26.7
+COREDIR=/usr/core
+COREENV=CORE_PHP=85 CORE_ABI=26.7 CORE_PYTHON=313
+CPUS=8
+DEVICE=ARM64
+DEVICEDIR=/usr/tools/device
+ENV_FILTER=env -i USER=root LOGNAME=root HOME=/root SHELL=/bin/sh BLOCKSIZE=K MAIL=/var/mail/root PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/root/bin TERM=su HOSTTYPE= VENDOR= OSTYPE= MACHTYPE= PWD=/usr/tools/build GROUP= HOST= EDITOR= PAGER= ABI_FILE=/usr/lib/crt1.o
+EXTRABRANCH=
+HOME=/root
+IMAGESDIR=/usr/local/opnsense/build/26.7/aarch64/images
+LANG=C.UTF-8
+LOGNAME=root
+LOGSDIR=/usr/local/opnsense/build/26.7/aarch64/logs
+MAIL=/var/mail/root
+MAKEFLAGS= DEVICE=ARM64 PORTSENV=DEPEND=no\ PRUNE=no VERSION=26.7.4
+MAKELEVEL=1
+META_MODE=normal
+MM_CHARSET=UTF-8
+OLDPWD=/usr/obj/usr/tools
+PACKAGESDIR=/.pkg
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/root/bin
+PLUGINSBRANCH=stable/26.7
+PLUGINSDIR=/usr/plugins
+PLUGINSENV=PLUGIN_PHP=85 PLUGIN_ABI=26.7 PLUGIN_PYTHON=313
+PORTSBRANCH=master
+PORTSDIR=/usr/ports
+PORTSENV=DEPEND=no PRUNE=no
+PORTSREFBRANCH=main
+PORTSREFDIR=/usr/freebsd-ports
+PORTSREFURL=https://git.FreeBSD.org/ports.git
+PRINT_ENV_SKIP=1
+PRODUCT_ABI=26.7
+PRODUCT_ADDITIONS=
+PRODUCT_APACHE=24
+PRODUCT_ARCH=aarch64
+PRODUCT_COMSPEED=115200
+PRODUCT_CORE=opnsense
+PRODUCT_CORES=opnsense opnsense-devel opnsense-business
+PRODUCT_DEBUG=
+PRODUCT_DEVEL=
+PRODUCT_DEVICE_REAL=ARM64
+PRODUCT_GITBASE=https://github.com/opnsense
+PRODUCT_HOST=aarch64
+PRODUCT_KERNEL=SMP-ARM
+PRODUCT_LUA=5.4
+PRODUCT_MIRROR=https://mirror.ams1.nl.leaseweb.net/opnsense
+PRODUCT_NAME=OPNsense
+PRODUCT_PERL=5.42
+PRODUCT_PHP=85
+PRODUCT_PLUGIN=os-*
+PRODUCT_PLUGINS=os-*
+PRODUCT_PRIVKEY=/usr/tools/config/26.7/repo.key
+PRODUCT_PUBKEY=/usr/tools/config/26.7/repo.pub
+PRODUCT_PYTHON=313
+PRODUCT_REBUILD=yes
+PRODUCT_RELEASE=OPNsense-26.7.4
+PRODUCT_RUBY=33
+PRODUCT_SETTINGS=26.7
+PRODUCT_SIGNCHK=/usr/tools/scripts/pkg_fingerprint.sh /usr/tools/config/26.7/repo.pub
+PRODUCT_SIGNCMD=/usr/tools/scripts/pkg_sign.sh /usr/tools/config/26.7/repo.pub /usr/tools/config/26.7/repo.key
+PRODUCT_SSL=openssl35
+PRODUCT_SUFFIX=
+PRODUCT_TARGET=arm64
+PRODUCT_TYPE=opnsense
+PRODUCT_UEFI=arm dvd serial vga vm
+PRODUCT_VERSION=26.7.4
+PRODUCT_WANTS_CROSS=aarch64-binutils qemu-user-static
+PRODUCT_ZFS_ALLOWED=
+PRODUCT_ZFS_REQUESTED=
+PWD=/usr/tools/build
+REMOTEDIR=
+SERVER=user@does.not.exist
+SETSDIR=/usr/local/opnsense/build/26.7/aarch64/sets
+SHELL=/bin/sh
+SRCABI=FreeBSD:15:aarch64
+SRCBRANCH=stable/26.7
+SRCDIR=/usr/src
+SRCREVISION=15.1
+SSH_CLIENT=192.168.65.1 63180 22
+SSH_CONNECTION=192.168.65.1 63180 192.168.65.3 22
+STAGEDIR=/usr/obj/usr/tools/config/26.7/aarch64
+STAGEDIRPREFIX=/usr/obj
+TARGETDIR=/usr/local/opnsense/build/26.7/aarch64
+TARGETDIRPREFIX=/usr/local/opnsense/build
+TERM=su
+TOOLSBRANCH=master
+TOOLSDIR=/usr/tools
+USER=root
+VERSION=26.7.4
+>>> Running build step: ports
+>>> Passing arguments: opnsense-update
+>>> Setting up stage in /usr/obj/usr/tools/config/26.7/aarch64
+>>> Setting up base in /usr/obj/usr/tools/config/26.7/aarch64
+>>> Setting up /usr/ports clone in /usr/obj/usr/tools/config/26.7/aarch64
+>>> Setting up /usr/src clone in /usr/obj/usr/tools/config/26.7/aarch64
+>>> Setting up chroot in /usr/obj/usr/tools/config/26.7/aarch64
+ELF ldconfig path: /lib /usr/lib /usr/lib/compat
+>>> Setting up distfiles in /usr/obj/usr/tools/config/26.7/aarch64
+>>> Extracting packages in /usr/obj/usr/tools/config/26.7/aarch64
+>>> Removing packages in /usr/obj/usr/tools/config/26.7/aarch64: opnsense-update
+[20260926131402] ===> License BSD2CLAUSE accepted by the user
+===>   opnsense-update-26.7 depends on file: /usr/local/sbin/pkg - not found
+===>   Installing existing package /.pkg-cache/All/pkg-2.3.1_1.pkg
+pkg-static: Both ABI_FILE and OSVERSION are set, ABI_FILE overrides OSVERSION
+Installing pkg-2.3.1_1...
+Extracting pkg-2.3.1_1: .......... done
+===>   opnsense-update-26.7 depends on file: /usr/local/sbin/pkg - found
+===>   Returning to build of opnsense-update-26.7
+[20260926131402] => opnsense-update-26.7_GH0.tar.gz doesn't seem to exist in /usr/ports/distfiles.
+[20260926131402] => Attempting to fetch https://codeload.github.com/opnsense/update/tar.gz/26.7?dummy=/opnsense-update-26.7_GH0.tar.gz
+fetch: https://codeload.github.com/opnsense/update/tar.gz/26.7?dummy=/opnsense-update-26.7_GH0.tar.gz: size unknown
+fetch: https://codeload.github.com/opnsense/update/tar.gz/26.7?dummy=/opnsense-update-26.7_GH0.tar.gz: size of remote file is not known
+opnsense-update-26.7_GH0.tar.gz                         29 kB  423 kBps    00s
+[20260926131402] => Fetched file size mismatch (expected 30458, actual 30476)
+[20260926131402] => Trying next site
+[20260926131402] => Attempting to fetch http://distcache.FreeBSD.org/ports-distfiles/opnsense-update-26.7_GH0.tar.gz
+fetch: http://distcache.FreeBSD.org/ports-distfiles/opnsense-update-26.7_GH0.tar.gz: Not Found
+[20260926131403] => Couldn't fetch it - please try to retrieve this
+[20260926131403] => port manually into /usr/ports/distfiles and try again.
+*** Error code 1
+
+Stop.
+make: stopped making "install" in /usr/ports/opnsense/update
+>>> Creating 26.7 signature for Judy.pkg... done
+>>> Creating 26.7 signature for abseil.pkg... done
+>>> Creating 26.7 signature for acme.sh.pkg... done
+>>> Creating 26.7 signature for addrwatch.pkg... done
+>>> Creating 26.7 signature for ap24-mod_auth_openidc.pkg... done
+>>> Creating 26.7 signature for ap24-mod_proxy_msrpc.pkg... done
+>>> Creating 26.7 signature for ap24-mod_security.pkg... done
+>>> Creating 26.7 signature for apache24.pkg... done
+>>> Creating 26.7 signature for apcupsd.pkg... done
+>>> Creating 26.7 signature for apr.pkg... done
+>>> Creating 26.7 signature for arc.pkg... done
+>>> Creating 26.7 signature for argp-standalone.pkg... done
+>>> Creating 26.7 signature for arj.pkg... done
+>>> Creating 26.7 signature for augeas.pkg... done
+>>> Creating 26.7 signature for autoconf.pkg... done
+>>> Creating 26.7 signature for autoconf-switch.pkg... done
+>>> Creating 26.7 signature for automake.pkg... done
+>>> Creating 26.7 signature for autossh.pkg... done
+>>> Creating 26.7 signature for avahi-app.pkg... done
+>>> Creating 26.7 signature for azure-agent.pkg... done
+>>> Creating 26.7 signature for base64.pkg... done
+>>> Creating 26.7 signature for bash.pkg... done
+>>> Creating 26.7 signature for bastille.pkg... done
+>>> Creating 26.7 signature for beats8.pkg... done
+>>> Creating 26.7 signature for bind-tools.pkg... done
+>>> Creating 26.7 signature for bind920.pkg... done
+>>> Creating 26.7 signature for binutils.pkg... done
+>>> Creating 26.7 signature for bird2.pkg... done
+>>> Creating 26.7 signature for bison.pkg... done
+>>> Creating 26.7 signature for boehm-gc.pkg... done
+>>> Creating 26.7 signature for boehm-gc-threaded.pkg... done
+>>> Creating 26.7 signature for boost-libs.pkg... done
+>>> Creating 26.7 signature for brotli.pkg... done
+>>> Creating 26.7 signature for burp.pkg... done
+>>> Creating 26.7 signature for bwm-ng.pkg... done
+>>> Creating 26.7 signature for c-ares.pkg... done
+>>> Creating 26.7 signature for c-icap.pkg... done
+>>> Creating 26.7 signature for c-icap-modules.pkg... done
+>>> Creating 26.7 signature for ca_root_nss.pkg... done
+>>> Creating 26.7 signature for caddy-custom.pkg... done
+>>> Creating 26.7 signature for cciss_vol_status.pkg... done
+>>> Creating 26.7 signature for check_mk_agent.pkg... done
+>>> Creating 26.7 signature for choparp.pkg... done
+>>> Creating 26.7 signature for chrony.pkg... done
+>>> Creating 26.7 signature for cjose.pkg... done
+>>> Creating 26.7 signature for clamav.pkg... done
+>>> Creating 26.7 signature for cloudflared.pkg... done
+>>> Creating 26.7 signature for cmake-core.pkg... done
+>>> Creating 26.7 signature for collectd5.pkg... done
+>>> Creating 26.7 signature for colordiff.pkg... done
+>>> Creating 26.7 signature for cpdup.pkg... done
+>>> Creating 26.7 signature for cpustats.pkg... done
+>>> Creating 26.7 signature for crowdsec.pkg... done
+>>> Creating 26.7 signature for crowdsec-firewall-bouncer.pkg... done
+>>> Creating 26.7 signature for cups.pkg... done
+>>> Creating 26.7 signature for curl.pkg... done
+>>> Creating 26.7 signature for cyrus-sasl.pkg... done
+>>> Creating 26.7 signature for cyrus-sasl-gssapi.pkg... done
+>>> Creating 26.7 signature for dbus.pkg... done
+>>> Creating 26.7 signature for dbus-glib.pkg... done
+>>> Creating 26.7 signature for ddclient.pkg... done
+>>> Creating 26.7 signature for dhcp6c.pkg... done
+>>> Creating 26.7 signature for dhcrelay.pkg... done
+>>> Creating 26.7 signature for diffutils.pkg... done
+>>> Creating 26.7 signature for dmidecode.pkg... done
+>>> Creating 26.7 signature for dnscrypt-proxy2.pkg... done
+>>> Creating 26.7 signature for dnsmasq.pkg... done
+>>> Creating 26.7 signature for dpinger.pkg... done
+>>> Creating 26.7 signature for easy-rsa.pkg... done
+>>> Creating 26.7 signature for emacs-nox.pkg... done
+>>> Creating 26.7 signature for esbuild.pkg... done
+>>> Creating 26.7 signature for ethname.pkg... done
+>>> Creating 26.7 signature for expat.pkg... done
+>>> Creating 26.7 signature for filterlog.pkg... done
+>>> Creating 26.7 signature for flashrom.pkg... done
+>>> Creating 26.7 signature for flock.pkg... done
+>>> Creating 26.7 signature for flowd.pkg... done
+>>> Creating 26.7 signature for fontconfig.pkg... done
+>>> Creating 26.7 signature for fping.pkg... done
+>>> Creating 26.7 signature for freecolor.pkg... done
+>>> Creating 26.7 signature for freeradius3.pkg... done
+>>> Creating 26.7 signature for freetds.pkg... done
+>>> Creating 26.7 signature for freetype2.pkg... done
+>>> Creating 26.7 signature for frr10.pkg... done
+>>> Creating 26.7 signature for frr10-pythontools.pkg... done
+>>> Creating 26.7 signature for fstrm.pkg... done
+>>> Creating 26.7 signature for fusefs-libs.pkg... done
+>>> Creating 26.7 signature for gdb.pkg... done
+>>> Creating 26.7 signature for gdbm.pkg... done
+>>> Creating 26.7 signature for getdns.pkg... done
+>>> Creating 26.7 signature for getopt.pkg... done
+>>> Creating 26.7 signature for gettext.pkg... done
+>>> Creating 26.7 signature for gettext-runtime.pkg... done
+>>> Creating 26.7 signature for gettext-tools.pkg... done
+>>> Creating 26.7 signature for giflib.pkg... done
+>>> Creating 26.7 signature for git.pkg... done
+>>> Creating 26.7 signature for glib.pkg... done
+>>> Creating 26.7 signature for glib-bootstrap.pkg... done
+>>> Creating 26.7 signature for gmake.pkg... done
+>>> Creating 26.7 signature for gmp.pkg... done
+>>> Creating 26.7 signature for gnokii.pkg... done
+>>> Creating 26.7 signature for gnome_subr.pkg... done
+>>> Creating 26.7 signature for gnu-watch.pkg... done
+>>> Creating 26.7 signature for gnupg.pkg... done
+>>> Creating 26.7 signature for gnutls.pkg... done
+>>> Creating 26.7 signature for go125.pkg... done
+>>> Creating 26.7 signature for go126.pkg... done
+>>> Creating 26.7 signature for google-cloud-sdk.pkg... done
+>>> Creating 26.7 signature for graphite2.pkg... done
+>>> Creating 26.7 signature for graphviz.pkg... done
+>>> Creating 26.7 signature for groff.pkg... done
+>>> Creating 26.7 signature for haproxy32.pkg... done
+>>> Creating 26.7 signature for harfbuzz.pkg... done
+>>> Creating 26.7 signature for help2man.pkg... done
+>>> Creating 26.7 signature for hidapi.pkg... done
+>>> Creating 26.7 signature for hiredis.pkg... done
+>>> Creating 26.7 signature for hostapd.pkg... done
+>>> Creating 26.7 signature for hostwatch.pkg... done
+>>> Creating 26.7 signature for hw-probe.pkg... done
+>>> Creating 26.7 signature for hwstat.pkg... done
+>>> Creating 26.7 signature for icinga2.pkg... done
+>>> Creating 26.7 signature for icu.pkg... done
+>>> Creating 26.7 signature for ifinfo.pkg... done
+>>> Creating 26.7 signature for iftop.pkg... done
+>>> Creating 26.7 signature for igmpproxy.pkg... done
+>>> Creating 26.7 signature for indexinfo.pkg... done
+>>> Creating 26.7 signature for iohyve.pkg... done
+>>> Creating 26.7 signature for iperf3.pkg... done
+>>> Creating 26.7 signature for ipmitool.pkg... done
+>>> Creating 26.7 signature for isc-dhcp44-server.pkg... done
+>>> Creating 26.7 signature for ivykis.pkg... done
+>>> Creating 26.7 signature for jansson.pkg... done
+>>> Creating 26.7 signature for jbigkit.pkg... done
+>>> Creating 26.7 signature for joe.pkg... done
+>>> Creating 26.7 signature for jpeg-turbo.pkg... done
+>>> Creating 26.7 signature for jq.pkg... done
+>>> Creating 26.7 signature for json-c.pkg... done
+>>> Creating 26.7 signature for jsoncpp.pkg... done
+>>> Creating 26.7 signature for kea.pkg... done
+>>> Creating 26.7 signature for krb5.pkg... done
+>>> Creating 26.7 signature for ldns.pkg... done
+>>> Creating 26.7 signature for lerc.pkg... done
+>>> Creating 26.7 signature for libassuan.pkg... done
+>>> Creating 26.7 signature for libcbor.pkg... done
+>>> Creating 26.7 signature for libcjson.pkg... done
+>>> Creating 26.7 signature for libconfig.pkg... done
+>>> Creating 26.7 signature for libdaemon.pkg... done
+>>> Creating 26.7 signature for libdeflate.pkg... done
+>>> Creating 26.7 signature for libdnet.pkg... done
+>>> Creating 26.7 signature for libedit.pkg... done
+>>> Creating 26.7 signature for libepoll-shim.pkg... done
+>>> Creating 26.7 signature for libev.pkg... done
+>>> Creating 26.7 signature for libevent.pkg... done
+>>> Creating 26.7 signature for libffi.pkg... done
+>>> Creating 26.7 signature for libfido2.pkg... done
+>>> Creating 26.7 signature for libfixbuf.pkg... done
+>>> Creating 26.7 signature for libfontenc.pkg... done
+>>> Creating 26.7 signature for libgcrypt.pkg... done
+>>> Creating 26.7 signature for libgd.pkg... done
+>>> Creating 26.7 signature for libgpg-error.pkg... done
+>>> Creating 26.7 signature for libiconv.pkg... done
+>>> Creating 26.7 signature for libidn2.pkg... done
+>>> Creating 26.7 signature for libinotify.pkg... done
+>>> Creating 26.7 signature for libksba.pkg... done
+>>> Creating 26.7 signature for libltdl.pkg... done
+>>> Creating 26.7 signature for liblz4.pkg... done
+>>> Creating 26.7 signature for libmaxminddb.pkg... done
+>>> Creating 26.7 signature for libmcrypt.pkg... done
+>>> Creating 26.7 signature for libmilter.pkg... done
+>>> Creating 26.7 signature for libmodbus.pkg... done
+>>> Creating 26.7 signature for libmspack.pkg... done
+>>> Creating 26.7 signature for libnet.pkg... done
+>>> Creating 26.7 signature for libnghttp2.pkg... done
+>>> Creating 26.7 signature for liboping.pkg... done
+>>> Creating 26.7 signature for libosip2.pkg... done
+>>> Creating 26.7 signature for libpaper.pkg... done
+>>> Creating 26.7 signature for libpci.pkg... done
+>>> Creating 26.7 signature for libpfctl.pkg... done
+>>> Creating 26.7 signature for libpsl.pkg... done
+>>> Creating 26.7 signature for librsync.pkg... done
+>>> Creating 26.7 signature for libslang2.pkg... done
+>>> Creating 26.7 signature for libsodium.pkg... done
+>>> Creating 26.7 signature for libssh.pkg... done
+>>> Creating 26.7 signature for libssh2.pkg... done
+>>> Creating 26.7 signature for libstatgrab.pkg... done
+>>> Creating 26.7 signature for libtasn1.pkg... done
+>>> Creating 26.7 signature for libtextstyle.pkg... done
+>>> Creating 26.7 signature for libtlsrpt.pkg... done
+>>> Creating 26.7 signature for libtool.pkg... done
+>>> Creating 26.7 signature for libunistring.pkg... done
+>>> Creating 26.7 signature for libunwind.pkg... done
+>>> Creating 26.7 signature for liburcu.pkg... done
+>>> Creating 26.7 signature for libuuid.pkg... done
+>>> Creating 26.7 signature for libuv.pkg... done
+>>> Creating 26.7 signature for libxml2.pkg... done
+>>> Creating 26.7 signature for libxslt.pkg... done
+>>> Creating 26.7 signature for libyaml.pkg... done
+>>> Creating 26.7 signature for libyang3.pkg... done
+>>> Creating 26.7 signature for libzmq4.pkg... done
+>>> Creating 26.7 signature for lighttpd.pkg... done
+>>> Creating 26.7 signature for lldpd.pkg... done
+>>> Creating 26.7 signature for lmdb.pkg... done
+>>> Creating 26.7 signature for log4cplus.pkg... done
+>>> Creating 26.7 signature for logrotate.pkg... done
+>>> Creating 26.7 signature for lsblk.pkg... done
+>>> Creating 26.7 signature for lsof.pkg... done
+>>> Creating 26.7 signature for lua53.pkg... done
+>>> Creating 26.7 signature for lua54.pkg... done
+>>> Creating 26.7 signature for lua54-luasocket.pkg... done
+>>> Creating 26.7 signature for lzo2.pkg... done
+>>> Creating 26.7 signature for m4.pkg... done
+>>> Creating 26.7 signature for mailutils.pkg... done
+>>> Creating 26.7 signature for maltrail.pkg... done
+>>> Creating 26.7 signature for mc.pkg... done
+>>> Creating 26.7 signature for mdns-repeater.pkg... done
+>>> Creating 26.7 signature for minify.pkg... done
+>>> Creating 26.7 signature for miniupnpd.pkg... done
+>>> Creating 26.7 signature for mkfontscale.pkg... done
+>>> Creating 26.7 signature for monit.pkg... done
+>>> Creating 26.7 signature for monitoring-plugins.pkg... done
+>>> Creating 26.7 signature for mosquitto.pkg... done
+>>> Creating 26.7 signature for mpd5.pkg... done
+>>> Creating 26.7 signature for mpdecimal.pkg... done
+>>> Creating 26.7 signature for mpfr.pkg... done
+>>> Creating 26.7 signature for msktutil.pkg... done
+>>> Creating 26.7 signature for mtr-nox11.pkg... done
+>>> Creating 26.7 signature for munin-common.pkg... done
+>>> Creating 26.7 signature for munin-node.pkg... done
+>>> Creating 26.7 signature for mysql84-client.pkg... done
+>>> Creating 26.7 signature for nano.pkg... done
+>>> Creating 26.7 signature for ndp-proxy-go.pkg... done
+>>> Creating 26.7 signature for ndpi.pkg... done
+>>> Creating 26.7 signature for neon.pkg... done
+>>> Creating 26.7 signature for net-snmp.pkg... done
+>>> Creating 26.7 signature for netbird.pkg... done
+>>> Creating 26.7 signature for netdata.pkg... done
+>>> Creating 26.7 signature for netmap-bridge.pkg... done
+>>> Creating 26.7 signature for nettle.pkg... done
+>>> Creating 26.7 signature for nginx.pkg... done
+>>> Creating 26.7 signature for ninja.pkg... done
+>>> Creating 26.7 signature for nmap.pkg... done
+>>> Creating 26.7 signature for node_exporter.pkg... done
+>>> Creating 26.7 signature for norm.pkg... done
+>>> Creating 26.7 signature for npth.pkg... done
+>>> Creating 26.7 signature for nrpe.pkg... done
+>>> Creating 26.7 signature for nspr.pkg... done
+>>> Creating 26.7 signature for nss.pkg... done
+>>> Creating 26.7 signature for ntopng.pkg... done
+>>> Creating 26.7 signature for ntp.pkg... done
+>>> Creating 26.7 signature for nut.pkg... done
+>>> Creating 26.7 signature for oath-toolkit.pkg... done
+>>> Creating 26.7 signature for ocserv.pkg... done
+>>> Creating 26.7 signature for oniguruma.pkg... done
+>>> Creating 26.7 signature for open-vm-kmod.pkg... done
+>>> Creating 26.7 signature for open-vm-tools-nox11.pkg... done
+>>> Creating 26.7 signature for openconnect.pkg... done
+>>> Creating 26.7 signature for openipmi.pkg... done
+>>> Creating 26.7 signature for openldap26-client.pkg... done
+>>> Creating 26.7 signature for openldap26-server.pkg... done
+>>> Creating 26.7 signature for openpgm.pkg... done
+>>> Creating 26.7 signature for openssh-portable.pkg... done
+>>> Creating 26.7 signature for openssl35.pkg... done
+>>> Creating 26.7 signature for openvpn.pkg... done
+>>> Creating 26.7 signature for opnsense-filterlog.pkg... done
+>>> Creating 26.7 signature for opnsense-installer.pkg... done
+>>> Creating 26.7 signature for opnsense-lang.pkg... done
+>>> Creating 26.7 signature for p11-kit.pkg... done
+>>> Creating 26.7 signature for p5-Algorithm-C3.pkg... done
+>>> Creating 26.7 signature for p5-Authen-NTLM.pkg... done
+>>> Creating 26.7 signature for p5-B-Hooks-EndOfScope.pkg... done
+>>> Creating 26.7 signature for p5-Cache.pkg... done
+>>> Creating 26.7 signature for p5-Cache-Cache.pkg... done
+>>> Creating 26.7 signature for p5-Class-C3.pkg... done
+>>> Creating 26.7 signature for p5-Class-Data-Inheritable.pkg... done
+>>> Creating 26.7 signature for p5-Class-Inspector.pkg... done
+>>> Creating 26.7 signature for p5-Class-Method-Modifiers.pkg... done
+>>> Creating 26.7 signature for p5-Class-Singleton.pkg... done
+>>> Creating 26.7 signature for p5-Clone.pkg... done
+>>> Creating 26.7 signature for p5-Clone-PP.pkg... done
+>>> Creating 26.7 signature for p5-Crypt-DES.pkg... done
+>>> Creating 26.7 signature for p5-DBD-Pg.pkg... done
+>>> Creating 26.7 signature for p5-DBD-Sybase.pkg... done
+>>> Creating 26.7 signature for p5-DBI.pkg... done
+>>> Creating 26.7 signature for p5-Data-OptList.pkg... done
+>>> Creating 26.7 signature for p5-Data-Validate-IP.pkg... done
+>>> Creating 26.7 signature for p5-DateTime.pkg... done
+>>> Creating 26.7 signature for p5-DateTime-HiRes.pkg... done
+>>> Creating 26.7 signature for p5-DateTime-Locale.pkg... done
+>>> Creating 26.7 signature for p5-DateTime-TimeZone.pkg... done
+>>> Creating 26.7 signature for p5-Devel-StackTrace.pkg... done
+>>> Creating 26.7 signature for p5-Digest-HMAC.pkg... done
+>>> Creating 26.7 signature for p5-Digest-SHA1.pkg... done
+>>> Creating 26.7 signature for p5-Dist-CheckConflicts.pkg... done
+>>> Creating 26.7 signature for p5-Email-Date-Format.pkg... done
+>>> Creating 26.7 signature for p5-Encode-Locale.pkg... done
+>>> Creating 26.7 signature for p5-Error.pkg... done
+>>> Creating 26.7 signature for p5-Eval-Closure.pkg... done
+>>> Creating 26.7 signature for p5-Exception-Class.pkg... done
+>>> Creating 26.7 signature for p5-Exporter-Tiny.pkg... done
+>>> Creating 26.7 signature for p5-File-LibMagic.pkg... done
+>>> Creating 26.7 signature for p5-File-Listing.pkg... done
+>>> Creating 26.7 signature for p5-File-NFSLock.pkg... done
+>>> Creating 26.7 signature for p5-File-ShareDir.pkg... done
+>>> Creating 26.7 signature for p5-File-Slurp.pkg... done
+>>> Creating 26.7 signature for p5-File-Which.pkg... done
+>>> Creating 26.7 signature for p5-FusionInventory-Agent.pkg... done
+>>> Creating 26.7 signature for p5-HTML-Parser.pkg... done
+>>> Creating 26.7 signature for p5-HTML-Tagset.pkg... done
+>>> Creating 26.7 signature for p5-HTTP-Cookies.pkg... done
+>>> Creating 26.7 signature for p5-HTTP-Daemon.pkg... done
+>>> Creating 26.7 signature for p5-HTTP-Date.pkg... done
+>>> Creating 26.7 signature for p5-HTTP-Message.pkg... done
+>>> Creating 26.7 signature for p5-HTTP-Negotiate.pkg... done
+>>> Creating 26.7 signature for p5-Heap.pkg... done
+>>> Creating 26.7 signature for p5-IO-HTML.pkg... done
+>>> Creating 26.7 signature for p5-IO-Multiplex.pkg... done
+>>> Creating 26.7 signature for p5-IO-Socket-INET6.pkg... done
+>>> Creating 26.7 signature for p5-IO-Socket-SSL.pkg... done
+>>> Creating 26.7 signature for p5-IO-String.pkg... done
+>>> Creating 26.7 signature for p5-IPC-ShareLite.pkg... done
+>>> Creating 26.7 signature for p5-LWP-MediaTypes.pkg... done
+>>> Creating 26.7 signature for p5-LWP-UserAgent-Cached.pkg... done
+>>> Creating 26.7 signature for p5-List-MoreUtils.pkg... done
+>>> Creating 26.7 signature for p5-List-MoreUtils-XS.pkg... done
+>>> Creating 26.7 signature for p5-Locale-Maketext-Lexicon.pkg... done
+>>> Creating 26.7 signature for p5-Locale-libintl.pkg... done
+>>> Creating 26.7 signature for p5-Log-Log4perl.pkg... done
+>>> Creating 26.7 signature for p5-MIME-Base32.pkg... done
+>>> Creating 26.7 signature for p5-MIME-Base64.pkg... done
+>>> Creating 26.7 signature for p5-MIME-Lite.pkg... done
+>>> Creating 26.7 signature for p5-MIME-Types.pkg... done
+>>> Creating 26.7 signature for p5-MRO-Compat.pkg... done
+>>> Creating 26.7 signature for p5-Mail-Tools.pkg... done
+>>> Creating 26.7 signature for p5-Module-Implementation.pkg... done
+>>> Creating 26.7 signature for p5-Module-Runtime.pkg... done
+>>> Creating 26.7 signature for p5-Mozilla-CA.pkg... done
+>>> Creating 26.7 signature for p5-Net-CIDR.pkg... done
+>>> Creating 26.7 signature for p5-Net-DNS.pkg... done
+>>> Creating 26.7 signature for p5-Net-HTTP.pkg... done
+>>> Creating 26.7 signature for p5-Net-IP.pkg... done
+>>> Creating 26.7 signature for p5-Net-SIP.pkg... done
+>>> Creating 26.7 signature for p5-Net-SNMP.pkg... done
+>>> Creating 26.7 signature for p5-Net-SSLeay.pkg... done
+>>> Creating 26.7 signature for p5-Net-Server.pkg... done
+>>> Creating 26.7 signature for p5-NetAddr-IP.pkg... done
+>>> Creating 26.7 signature for p5-Package-Stash.pkg... done
+>>> Creating 26.7 signature for p5-Package-Stash-XS.pkg... done
+>>> Creating 26.7 signature for p5-Params-Util.pkg... done
+>>> Creating 26.7 signature for p5-Params-Validate.pkg... done
+>>> Creating 26.7 signature for p5-Params-ValidationCompiler.pkg... done
+>>> Creating 26.7 signature for p5-Proc-Daemon.pkg... done
+>>> Creating 26.7 signature for p5-Proc-PID-File.pkg... done
+>>> Creating 26.7 signature for p5-Role-Tiny.pkg... done
+>>> Creating 26.7 signature for p5-Socket6.pkg... done
+>>> Creating 26.7 signature for p5-Specio.pkg... done
+>>> Creating 26.7 signature for p5-Sub-Exporter.pkg... done
+>>> Creating 26.7 signature for p5-Sub-Exporter-Progressive.pkg... done
+>>> Creating 26.7 signature for p5-Sub-Identify.pkg... done
+>>> Creating 26.7 signature for p5-Sub-Install.pkg... done
+>>> Creating 26.7 signature for p5-Sub-Quote.pkg... done
+>>> Creating 26.7 signature for p5-Term-ReadKey.pkg... done
+>>> Creating 26.7 signature for p5-Text-Template.pkg... done
+>>> Creating 26.7 signature for p5-Text-Unidecode.pkg... done
+>>> Creating 26.7 signature for p5-TimeDate.pkg... done
+>>> Creating 26.7 signature for p5-Try-Tiny.pkg... done
+>>> Creating 26.7 signature for p5-UNIVERSAL-require.pkg... done
+>>> Creating 26.7 signature for p5-URI.pkg... done
+>>> Creating 26.7 signature for p5-Unicode-EastAsianWidth.pkg... done
+>>> Creating 26.7 signature for p5-Variable-Magic.pkg... done
+>>> Creating 26.7 signature for p5-WWW-RobotRules.pkg... done
+>>> Creating 26.7 signature for p5-XML-LibXML.pkg... done
+>>> Creating 26.7 signature for p5-XML-NamespaceSupport.pkg... done
+>>> Creating 26.7 signature for p5-XML-Parser.pkg... done
+>>> Creating 26.7 signature for p5-XML-SAX.pkg... done
+>>> Creating 26.7 signature for p5-XML-SAX-Base.pkg... done
+>>> Creating 26.7 signature for p5-XML-TreePP.pkg... done
+>>> Creating 26.7 signature for p5-XML-XPath.pkg... done
+>>> Creating 26.7 signature for p5-XString.pkg... done
+>>> Creating 26.7 signature for p5-libwww.pkg... done
+>>> Creating 26.7 signature for p5-namespace-autoclean.pkg... done
+>>> Creating 26.7 signature for p5-namespace-clean.pkg... done
+>>> Creating 26.7 signature for pam_opnsense.pkg... done
+>>> Creating 26.7 signature for patch.pkg... done
+>>> Creating 26.7 signature for pciids.pkg... done
+>>> Creating 26.7 signature for pciutils.pkg... done
+>>> Creating 26.7 signature for pcl.pkg... done
+>>> Creating 26.7 signature for pcre.pkg... done
+>>> Creating 26.7 signature for pcre2.pkg... done
+>>> Creating 26.7 signature for perl5.pkg... done
+>>> Creating 26.7 signature for pftop.pkg... done
+>>> Creating 26.7 signature for php85.pkg... done
+>>> Creating 26.7 signature for php85-bcmath.pkg... done
+>>> Creating 26.7 signature for php85-ctype.pkg... done
+>>> Creating 26.7 signature for php85-curl.pkg... done
+>>> Creating 26.7 signature for php85-dom.pkg... done
+>>> Creating 26.7 signature for php85-filter.pkg... done
+>>> Creating 26.7 signature for php85-gettext.pkg... done
+>>> Creating 26.7 signature for php85-google-api-php-client.pkg... done
+>>> Creating 26.7 signature for php85-ldap.pkg... done
+>>> Creating 26.7 signature for php85-mbstring.pkg... done
+>>> Creating 26.7 signature for php85-mysqli.pkg... done
+>>> Creating 26.7 signature for php85-pcntl.pkg... done
+>>> Creating 26.7 signature for php85-pdo.pkg... done
+>>> Creating 26.7 signature for php85-pear.pkg... done
+>>> Creating 26.7 signature for php85-pear-Crypt_CHAP.pkg... done
+>>> Creating 26.7 signature for php85-pear-PHP_CodeSniffer.pkg... done
+>>> Creating 26.7 signature for php85-pecl-mailparse.pkg... done
+>>> Creating 26.7 signature for php85-pecl-mcrypt.pkg... done
+>>> Creating 26.7 signature for php85-pecl-mongodb.pkg... done
+>>> Creating 26.7 signature for php85-pecl-radius.pkg... done
+>>> Creating 26.7 signature for php85-pecl-xdebug.pkg... done
+>>> Creating 26.7 signature for php85-phalcon.pkg... done
+>>> Creating 26.7 signature for php85-phar.pkg... done
+>>> Creating 26.7 signature for php85-phpseclib.pkg... done
+>>> Creating 26.7 signature for php85-session.pkg... done
+>>> Creating 26.7 signature for php85-simplexml.pkg... done
+>>> Creating 26.7 signature for php85-soap.pkg... done
+>>> Creating 26.7 signature for php85-sockets.pkg... done
+>>> Creating 26.7 signature for php85-sqlite3.pkg... done
+>>> Creating 26.7 signature for php85-tokenizer.pkg... done
+>>> Creating 26.7 signature for php85-xml.pkg... done
+>>> Creating 26.7 signature for php85-xmlwriter.pkg... done
+>>> Creating 26.7 signature for php85-zlib.pkg... done
+>>> Creating 26.7 signature for phpmailer.pkg... done
+>>> Creating 26.7 signature for phpunit9-php85.pkg... done
+>>> Creating 26.7 signature for pimd.pkg... done
+>>> Creating 26.7 signature for pinentry.pkg... done
+>>> Creating 26.7 signature for pinentry-curses.pkg... done
+>>> Creating 26.7 signature for pkcs11-helper.pkg... done
+>>> Creating 26.7 signature for pkg.pkg... done
+>>> Creating 26.7 signature for pkgconf.pkg... done
+>>> Creating 26.7 signature for png.pkg... done
+>>> Creating 26.7 signature for popt.pkg... done
+>>> Creating 26.7 signature for postfix.pkg... done
+>>> Creating 26.7 signature for postgresql18-client.pkg... done
+>>> Creating 26.7 signature for powerdns.pkg... done
+>>> Creating 26.7 signature for powerman.pkg... done
+>>> Creating 26.7 signature for privoxy.pkg... done
+>>> Creating 26.7 signature for protobuf.pkg... done
+>>> Creating 26.7 signature for protobuf-c.pkg... done
+>>> Creating 26.7 signature for pstree.pkg... done
+>>> Creating 26.7 signature for psutils.pkg... done
+>>> Creating 26.7 signature for puppet8.pkg... done
+>>> Creating 26.7 signature for py313-Babel.pkg... done
+>>> Creating 26.7 signature for py313-Jinja2.pkg... done
+>>> Creating 26.7 signature for py313-aioquic.pkg... done
+>>> Creating 26.7 signature for py313-ansible.pkg... done
+>>> Creating 26.7 signature for py313-ansible-core.pkg... done
+>>> Creating 26.7 signature for py313-anyio.pkg... done
+>>> Creating 26.7 signature for py313-async_generator.pkg... done
+>>> Creating 26.7 signature for py313-attrs.pkg... done
+>>> Creating 26.7 signature for py313-awscli.pkg... done
+>>> Creating 26.7 signature for py313-beautifulsoup.pkg... done
+>>> Creating 26.7 signature for py313-boto3.pkg... done
+>>> Creating 26.7 signature for py313-botocore.pkg... done
+>>> Creating 26.7 signature for py313-bottleneck.pkg... done
+>>> Creating 26.7 signature for py313-certifi.pkg... done
+>>> Creating 26.7 signature for py313-cffi.pkg... done
+>>> Creating 26.7 signature for py313-charset-normalizer.pkg... done
+>>> Creating 26.7 signature for py313-click.pkg... done
+>>> Creating 26.7 signature for py313-colorama.pkg... done
+>>> Creating 26.7 signature for py313-cryptography.pkg... done
+>>> Creating 26.7 signature for py313-decorator.pkg... done
+>>> Creating 26.7 signature for py313-dns-lexicon.pkg... done
+>>> Creating 26.7 signature for py313-dnspython.pkg... done
+>>> Creating 26.7 signature for py313-docutils.pkg... done
+>>> Creating 26.7 signature for py313-duckdb.pkg... done
+>>> Creating 26.7 signature for py313-fail2ban.pkg... done
+>>> Creating 26.7 signature for py313-filelock.pkg... done
+>>> Creating 26.7 signature for py313-h11.pkg... done
+>>> Creating 26.7 signature for py313-h2.pkg... done
+>>> Creating 26.7 signature for py313-haproxy-cli.pkg... done
+>>> Creating 26.7 signature for py313-hpack.pkg... done
+>>> Creating 26.7 signature for py313-html5lib.pkg... done
+>>> Creating 26.7 signature for py313-httpcore.pkg... done
+>>> Creating 26.7 signature for py313-httpx.pkg... done
+>>> Creating 26.7 signature for py313-hyperframe.pkg... done
+>>> Creating 26.7 signature for py313-idna.pkg... done
+>>> Creating 26.7 signature for py313-importlib-resources.pkg... done
+>>> Creating 26.7 signature for py313-iniconfig.pkg... done
+>>> Creating 26.7 signature for py313-jmespath.pkg... done
+>>> Creating 26.7 signature for py313-jq.pkg... done
+>>> Creating 26.7 signature for py313-jsonpath-ng.pkg... done
+>>> Creating 26.7 signature for py313-ldap3.pkg... done
+>>> Creating 26.7 signature for py313-lxml.pkg... done
+>>> Creating 26.7 signature for py313-markupsafe.pkg... done
+>>> Creating 26.7 signature for py313-netaddr.pkg... done
+>>> Creating 26.7 signature for py313-numexpr.pkg... done
+>>> Creating 26.7 signature for py313-numpy.pkg... done
+>>> Creating 26.7 signature for py313-opn-cli.pkg... done
+>>> Creating 26.7 signature for py313-outcome.pkg... done
+>>> Creating 26.7 signature for py313-packaging.pkg... done
+>>> Creating 26.7 signature for py313-pandas.pkg... done
+>>> Creating 26.7 signature for py313-passlib.pkg... done
+>>> Creating 26.7 signature for py313-pcapy-ng.pkg... done
+>>> Creating 26.7 signature for py313-pluggy.pkg... done
+>>> Creating 26.7 signature for py313-ply.pkg... done
+>>> Creating 26.7 signature for py313-ptable.pkg... done
+>>> Creating 26.7 signature for py313-pyasn1.pkg... done
+>>> Creating 26.7 signature for py313-pyasn1-modules.pkg... done
+>>> Creating 26.7 signature for py313-pycodestyle.pkg... done
+>>> Creating 26.7 signature for py313-pycparser.pkg... done
+>>> Creating 26.7 signature for py313-pygments.pkg... done
+>>> Creating 26.7 signature for py313-pyinotify.pkg... done
+>>> Creating 26.7 signature for py313-pylsqpack.pkg... done
+>>> Creating 26.7 signature for py313-pymongo.pkg... done
+>>> Creating 26.7 signature for py313-pyopenssl.pkg... done
+>>> Creating 26.7 signature for py313-pyotp.pkg... done
+>>> Creating 26.7 signature for py313-pypcap.pkg... done
+>>> Creating 26.7 signature for py313-pysocks.pkg... done
+>>> Creating 26.7 signature for py313-pytest.pkg... done
+>>> Creating 26.7 signature for py313-python-dateutil.pkg... done
+>>> Creating 26.7 signature for py313-pytz.pkg... done
+>>> Creating 26.7 signature for py313-pyyaml.pkg... done
+>>> Creating 26.7 signature for py313-redis.pkg... done
+>>> Creating 26.7 signature for py313-requests.pkg... done
+>>> Creating 26.7 signature for py313-requests-file.pkg... done
+>>> Creating 26.7 signature for py313-requests-unixsocket.pkg... done
+>>> Creating 26.7 signature for py313-resolvelib.pkg... done
+>>> Creating 26.7 signature for py313-rsa.pkg... done
+>>> Creating 26.7 signature for py313-s3transfer.pkg... done
+>>> Creating 26.7 signature for py313-scapy.pkg... done
+>>> Creating 26.7 signature for py313-service-identity.pkg... done
+>>> Creating 26.7 signature for py313-setuptools.pkg... done
+>>> Creating 26.7 signature for py313-six.pkg... done
+>>> Creating 26.7 signature for py313-sniffio.pkg... done
+>>> Creating 26.7 signature for py313-socksio.pkg... done
+>>> Creating 26.7 signature for py313-sortedcontainers.pkg... done
+>>> Creating 26.7 signature for py313-soupsieve.pkg... done
+>>> Creating 26.7 signature for py313-speedtest-cli.pkg... done
+>>> Creating 26.7 signature for py313-sqlite3.pkg... done
+>>> Creating 26.7 signature for py313-tldextract.pkg... done
+>>> Creating 26.7 signature for py313-toml.pkg... done
+>>> Creating 26.7 signature for py313-trio.pkg... done
+>>> Creating 26.7 signature for py313-truststore.pkg... done
+>>> Creating 26.7 signature for py313-typing-extensions.pkg... done
+>>> Creating 26.7 signature for py313-tzdata.pkg... done
+>>> Creating 26.7 signature for py313-ujson.pkg... done
+>>> Creating 26.7 signature for py313-urllib3.pkg... done
+>>> Creating 26.7 signature for py313-vici.pkg... done
+>>> Creating 26.7 signature for py313-webencodings.pkg... done
+>>> Creating 26.7 signature for python313.pkg... done
+>>> Creating 26.7 signature for qemu-guest-agent.pkg... done
+>>> Creating 26.7 signature for radsecproxy.pkg... done
+>>> Creating 26.7 signature for radvd.pkg... done
+>>> Creating 26.7 signature for re2.pkg... done
+>>> Creating 26.7 signature for readline.pkg... done
+>>> Creating 26.7 signature for realtek-re-kmod.pkg... done
+>>> Creating 26.7 signature for redis72.pkg... done
+>>> Creating 26.7 signature for relayd.pkg... done
+>>> Creating 26.7 signature for rhash.pkg... done
+>>> Creating 26.7 signature for rrdtool.pkg... done
+>>> Creating 26.7 signature for rspamd.pkg... done
+>>> Creating 26.7 signature for rsync.pkg... done
+>>> Creating 26.7 signature for rtrlib.pkg... done
+>>> Creating 26.7 signature for ruby.pkg... done
+>>> Creating 26.7 signature for ruby33-gems.pkg... done
+>>> Creating 26.7 signature for rubygem-base64.pkg... done
+>>> Creating 26.7 signature for rubygem-concurrent-ruby.pkg... done
+>>> Creating 26.7 signature for rubygem-deep_merge.pkg... done
+>>> Creating 26.7 signature for rubygem-facter.pkg... done
+>>> Creating 26.7 signature for rubygem-fast_gettext.pkg... done
+>>> Creating 26.7 signature for rubygem-ffi.pkg... done
+>>> Creating 26.7 signature for rubygem-fiddle.pkg... done
+>>> Creating 26.7 signature for rubygem-forwardable.pkg... done
+>>> Creating 26.7 signature for rubygem-getoptlong.pkg... done
+>>> Creating 26.7 signature for rubygem-hocon.pkg... done
+>>> Creating 26.7 signature for rubygem-json_pure.pkg... done
+>>> Creating 26.7 signature for rubygem-locale.pkg... done
+>>> Creating 26.7 signature for rubygem-logger.pkg... done
+>>> Creating 26.7 signature for rubygem-multi_json.pkg... done
+>>> Creating 26.7 signature for rubygem-prime.pkg... done
+>>> Creating 26.7 signature for rubygem-puppet-resource_api.pkg... done
+>>> Creating 26.7 signature for rubygem-racc.pkg... done
+>>> Creating 26.7 signature for rubygem-rexml.pkg... done
+>>> Creating 26.7 signature for rubygem-ruby-augeas.pkg... done
+>>> Creating 26.7 signature for rubygem-scanf.pkg... done
+>>> Creating 26.7 signature for rubygem-semantic_puppet.pkg... done
+>>> Creating 26.7 signature for rubygem-singleton.pkg... done
+>>> Creating 26.7 signature for rubygem-sys-filesystem.pkg... done
+>>> Creating 26.7 signature for rubygem-syslog.pkg... done
+>>> Creating 26.7 signature for rubygem-thor.pkg... done
+>>> Creating 26.7 signature for rust.pkg... done
+>>> Creating 26.7 signature for samplicator.pkg... done
+>>> Creating 26.7 signature for sarg.pkg... done
+>>> Creating 26.7 signature for scons-py313.pkg... done
+>>> Creating 26.7 signature for screen.pkg... done
+>>> Creating 26.7 signature for shadowsocks-rust.pkg... done
+>>> Creating 26.7 signature for siproxd.pkg... done
+>>> Creating 26.7 signature for smartmontools.pkg... done
+>>> Creating 26.7 signature for smtp-cli.pkg... done
+>>> Creating 26.7 signature for snappy.pkg... done
+>>> Creating 26.7 signature for socat.pkg... done
+>>> Creating 26.7 signature for source-highlight.pkg... done
+>>> Creating 26.7 signature for sqlite3.pkg... done
+>>> Creating 26.7 signature for squid.pkg... done
+>>> Creating 26.7 signature for squid-langpack.pkg... done
+>>> Creating 26.7 signature for sslh.pkg... done
+>>> Creating 26.7 signature for sslproxy.pkg... done
+>>> Creating 26.7 signature for sslscan.pkg... done
+>>> Creating 26.7 signature for stress-ng.pkg... done
+>>> Creating 26.7 signature for strongswan.pkg... done
+>>> Creating 26.7 signature for stunnel.pkg... done
+>>> Creating 26.7 signature for sudo.pkg... done
+>>> Creating 26.7 signature for suricata.pkg... done
+>>> Creating 26.7 signature for sysinfo.pkg... done
+>>> Creating 26.7 signature for syslog-ng.pkg... done
+>>> Creating 26.7 signature for tailscale.pkg... done
+>>> Creating 26.7 signature for talloc.pkg... done
+>>> Creating 26.7 signature for tayga.pkg... done
+>>> Creating 26.7 signature for telegraf.pkg... done
+>>> Creating 26.7 signature for texinfo.pkg... done
+>>> Creating 26.7 signature for tftp-hpa.pkg... done
+>>> Creating 26.7 signature for tiff.pkg... done
+>>> Creating 26.7 signature for tinc.pkg... done
+>>> Creating 26.7 signature for tinycdb.pkg... done
+>>> Creating 26.7 signature for tmux.pkg... done
+>>> Creating 26.7 signature for tor.pkg... done
+>>> Creating 26.7 signature for tree-sitter.pkg... done
+>>> Creating 26.7 signature for turnserver.pkg... done
+>>> Creating 26.7 signature for uchardet.pkg... done
+>>> Creating 26.7 signature for udpbroadcastrelay.pkg... done
+>>> Creating 26.7 signature for uftp.pkg... done
+>>> Creating 26.7 signature for unbound.pkg... done
+>>> Creating 26.7 signature for unixODBC.pkg... done
+>>> Creating 26.7 signature for unzoo.pkg... done
+>>> Creating 26.7 signature for urwfonts.pkg... done
+>>> Creating 26.7 signature for vim.pkg... done
+>>> Creating 26.7 signature for virt-what.pkg... done
+>>> Creating 26.7 signature for vnstat.pkg... done
+>>> Creating 26.7 signature for vpnc-scripts.pkg... done
+>>> Creating 26.7 signature for wazuh-agent.pkg... done
+>>> Creating 26.7 signature for webgrind.pkg... done
+>>> Creating 26.7 signature for webp.pkg... done
+>>> Creating 26.7 signature for wget.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath10k-kmod-qca4019_hw10.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath10k-kmod-qca6174_hw21.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath10k-kmod-qca6174_hw30.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath10k-kmod-qca9377_hw10.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath10k-kmod-qca9887_hw10.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath10k-kmod-qca9888_hw20.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath10k-kmod-qca988x_hw20.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath10k-kmod-qca9984_hw10.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath10k-kmod-qca99x0_hw20.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath10k-kmod-wcn3990_hw10.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath11k-kmod-ipq5018_hw10.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath11k-kmod-ipq6018_hw10.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath11k-kmod-ipq8074_hw20.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath11k-kmod-qca2066_hw21.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath11k-kmod-qca6390_hw20.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath11k-kmod-qca6698aq_hw21.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath11k-kmod-qcn9074_hw10.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath11k-kmod-wcn6750_hw10.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath11k-kmod-wcn6855_hw20.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath12k-kmod-qcn9274_hw20.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-ath12k-kmod-wcn7850_hw20.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-iwlwifi-kmod-22000.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-iwlwifi-kmod-7000.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-iwlwifi-kmod-8000.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-iwlwifi-kmod-9000.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-iwlwifi-kmod-ax210.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-iwlwifi-kmod-bz.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-iwlwifi-kmod-sc.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-kmod.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-mt76-kmod-mt7615.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-mt76-kmod-mt7915.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-mt76-kmod-mt7921.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-mt76-kmod-mt7925.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-mt76-kmod-mt7996.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-mt76-kmod-mtk_wed.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-mt7601u-kmod.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw88-kmod-rtw8703b.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw88-kmod-rtw8723d.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw88-kmod-rtw8812a.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw88-kmod-rtw8814a.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw88-kmod-rtw8821a.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw88-kmod-rtw8821c.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw88-kmod-rtw8822b.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw88-kmod-rtw8822c.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw89-kmod-rtw8851b.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw89-kmod-rtw8852a.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw89-kmod-rtw8852b.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw89-kmod-rtw8852bt.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw89-kmod-rtw8852c.pkg... done
+>>> Creating 26.7 signature for wifi-firmware-rtw89-kmod-rtw8922a.pkg... done
+>>> Creating 26.7 signature for wol.pkg... done
+>>> Creating 26.7 signature for wpa_supplicant.pkg... done
+>>> Creating 26.7 signature for xmlsec1.pkg... done
+>>> Creating 26.7 signature for xray-core.pkg... done
+>>> Creating 26.7 signature for xxd.pkg... done
+>>> Creating 26.7 signature for xxhash.pkg... done
+>>> Creating 26.7 signature for xymon-client.pkg... done
+>>> Creating 26.7 signature for yaf.pkg... done
+>>> Creating 26.7 signature for yajl.pkg... done
+>>> Creating 26.7 signature for yara.pkg... done
+>>> Creating 26.7 signature for zabbix6-agent.pkg... done
+>>> Creating 26.7 signature for zabbix6-proxy.pkg... done
+>>> Creating 26.7 signature for zabbix7-agent.pkg... done
+>>> Creating 26.7 signature for zabbix7-proxy.pkg... done
+>>> Creating 26.7 signature for zabbix74-agent.pkg... done
+>>> Creating 26.7 signature for zabbix74-proxy.pkg... done
+>>> Creating 26.7 signature for zerotier.pkg... done
+>>> Creating 26.7 signature for zip.pkg... done
+>>> Creating 26.7 signature for zstd.pkg... done
+Creating repository in /usr/obj/usr/tools/config/26.7/aarch64/.pkg-new/: .......... done
+Packing files for repository: .... done
+>>> Removing packages set
+>>> Creating package mirror set for 26.7.4-aarch64... done
+>>> Creating 26.7 signature for packages-26.7.4-aarch64.tar... done
+function: "sha256"
+fingerprint: "129a978919f32affb3c5c189f8f19f1259b4661b1b6d8b875cc5e663bf40838f"
+-rw-r--r--  1 root wheel  1.2G Sep 26 13:14 packages-26.7.4-aarch64.tar
+-rw-r--r--  1 root wheel  1.3K Sep 26 13:14 packages-26.7.4-aarch64.tar.sig
+>>> ERROR: The build encountered fatal issues!
+>>> Aborted opnsense-update-26.7 via opnsense/update
+*** Error code 1
+
+Stop.
+make: stopped making "ports-opnsense-update" in /usr/tools

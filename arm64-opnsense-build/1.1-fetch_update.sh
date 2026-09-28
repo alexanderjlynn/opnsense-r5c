@@ -23,8 +23,50 @@ else
 	git clone --depth=1 https://github.com/opnsense/tools.git "${ROOTDIR}/tools"
 fi
 
-# fetch all source codes
-make -C "${ROOTDIR}/tools" update
+# Fetch every source tree at the requested point release.  Passing VERSION is
+# essential: without it, update follows the release branches (for example the
+# initial 26.7 tag) while the later stages label the output as 26.7.4.
+make -C "${ROOTDIR}/tools" VERSION="${TAG_SRC}" DEVICE="${DEVICE}" update
+
+# Fail here, before an hours-long build, if any checkout does not match the
+# exact tag selected by the user.
+SOURCE_MANIFEST="${LOGDIR}/sources.${TAG_SRC}.manifest"
+SOURCE_MANIFEST_NEW="${SOURCE_MANIFEST}.new.$$"
+: > "${SOURCE_MANIFEST_NEW}"
+for REPOSITORY in tools src core plugins ports; do
+	REPOSITORY_DIR="${ROOTDIR}/${REPOSITORY}"
+	EXPECTED_COMMIT=$(git -C "${REPOSITORY_DIR}" rev-list -n 1 \
+	    "refs/tags/${TAG_SRC}" 2>/dev/null || true)
+	ACTUAL_COMMIT=$(git -C "${REPOSITORY_DIR}" rev-parse HEAD 2>/dev/null || true)
+	if [ -z "${EXPECTED_COMMIT}" ] || [ "${ACTUAL_COMMIT}" != "${EXPECTED_COMMIT}" ]; then
+		echo "${REPOSITORY_DIR} is not checked out at exact tag ${TAG_SRC}." >&2
+		exit 1
+	fi
+	echo "Verified ${REPOSITORY} at ${TAG_SRC} (${ACTUAL_COMMIT})"
+	printf '%s=%s\n' "${REPOSITORY}" "${ACTUAL_COMMIT}" >> "${SOURCE_MANIFEST_NEW}"
+done
+
+# Generated sets are safe to reuse only when their recorded source commits
+# match.  Older versions of this script did not write a manifest and could
+# accidentally label branch-tip (for example 26.7) output as a point release
+# (for example 26.7.4), so invalidate unverified cached output as well.
+SETS_DIR=$(make -C "${ROOTDIR}/tools" VERSION="${TAG_SRC}" \
+    DEVICE="${DEVICE}" -V SETSDIR)
+STALE_OUTPUT=no
+if [ -f "${SOURCE_MANIFEST}" ]; then
+	if ! cmp -s "${SOURCE_MANIFEST}" "${SOURCE_MANIFEST_NEW}"; then
+		STALE_OUTPUT=yes
+	fi
+elif [ -d "${SETS_DIR}" ] && [ -n "$(find "${SETS_DIR}" -type f -print -quit)" ]; then
+	STALE_OUTPUT=yes
+fi
+
+if [ "${STALE_OUTPUT}" = yes ]; then
+	echo "Source provenance changed or is unknown; removing stale generated build output."
+	make -C "${ROOTDIR}/tools" VERSION="${TAG_SRC}" DEVICE="${DEVICE}" \
+	    clean-sets,images,obj
+fi
+mv "${SOURCE_MANIFEST_NEW}" "${SOURCE_MANIFEST}"
 
 # Save current dir for future references
 CURRENT_DIR=$(pwd)
@@ -38,12 +80,52 @@ if [ ! -d "${PKG_PORT}" ]; then
 	echo "Could not locate the OPNsense pkg port under ${ROOTDIR}/ports" >&2
 	exit 1
 fi
-BUILD_JOBS=${BUILD_JOBS:-$(sysctl -n hw.ncpu)}
-make -C "${PKG_PORT}" -j"${BUILD_JOBS}"
+# Do not parallelize the ports framework targets themselves.  It manages
+# parallelism for the port's vendor build; top-level -j can race fetch/extract
+# cookie targets on newer bmake versions.
+make -C "${PKG_PORT}" clean
+make -C "${PKG_PORT}"
 pkg unlock -y pkg >/dev/null 2>&1 || true
 #make deinstall
 make -C "${PKG_PORT}" reinstall
 pkg lock -y pkg
+
+# The FreeBSD host package repository can contain a newer Perl patch release
+# than this tagged OPNsense ports tree.  Its broad package dependency is then
+# satisfied, but ports still invoke the tag's exact versioned interpreter.
+# Install that exact version from the checked-out tree when it is absent.
+PERL_PROBE_PORT="${ROOTDIR}/ports/devel/p5-Locale-gettext"
+if [ -d "${PERL_PROBE_PORT}" ]; then
+	PERL_BIN=$(make -C "${PERL_PROBE_PORT}" -V PERL5)
+	PERL_PORT=$(make -C "${PERL_PROBE_PORT}" -V PERL_PORT)
+	if [ -z "${PERL_BIN}" ] || [ -z "${PERL_PORT}" ]; then
+		echo "Could not determine the tagged ports tree's Perl version" >&2
+		exit 1
+	fi
+	echo "Checking tagged Perl interpreter: ${PERL_BIN}"
+	if [ ! -x "${PERL_BIN}" ]; then
+		case "${PERL_PORT}" in
+		perl5.*|perl5-devel) ;;
+		*)
+			echo "Unexpected Perl port name: ${PERL_PORT}" >&2
+			exit 1
+			;;
+		esac
+		PERL_PORT_DIR="${ROOTDIR}/ports/lang/${PERL_PORT}"
+		[ -d "${PERL_PORT_DIR}" ] || {
+			echo "Tagged Perl port is missing: ${PERL_PORT_DIR}" >&2
+			exit 1
+		}
+		echo "Installing tagged ${PERL_PORT}; missing ${PERL_BIN}"
+		pkg unlock -y perl5 >/dev/null 2>&1 || true
+		make -C "${PERL_PORT_DIR}" clean
+		make -C "${PERL_PORT_DIR}" reinstall
+	fi
+	if [ ! -x "${PERL_BIN}" ]; then
+		echo "Tagged Perl installation did not restore ${PERL_BIN}" >&2
+		exit 1
+	fi
+fi
 
 # Back to initial dir
 cd "${CURRENT_DIR}"
@@ -62,10 +144,62 @@ cp "${SRC_DIR}/R5C_UBOOT.conf" "${SRC_DIR}/R5C_USB.conf" "${ROOTDIR}/tools/devic
 echo "Create and install local sysutils/u-boot-nanopi-r5c port"
 mkdir -p "${ROOTDIR}/ports/sysutils/u-boot-nanopi-r5c"
 cp -R u-boot-nanopi-r5c/. "${ROOTDIR}/ports/sysutils/u-boot-nanopi-r5c/"
+
+# A reused build VM may still contain automatic Python build dependencies from
+# the previous ports snapshot.  Python-flavored ports install some unsuffixed
+# command links, so an old flavor (for example py311-build) conflicts with the
+# current tree's flavor (for example py312-build).  Derive the U-Boot dependency
+# closure and remove only automatic, alternate Python flavors from that closure.
+# The current dependencies are then installed normally by the ports framework.
+UBOOT_PORT="${ROOTDIR}/ports/sysutils/u-boot-nanopi-r5c"
+PYTHON_PREFIX=$(make -C "${UBOOT_PORT}" -V PYTHON_PKGNAMEPREFIX)
+case "${PYTHON_PREFIX}" in
+py[0-9][0-9][0-9]-) ;;
+*)
+	echo "Unexpected U-Boot Python package prefix: ${PYTHON_PREFIX}" >&2
+	exit 1
+	;;
+esac
+
+DEPENDENCY_ORIGINS=$(mktemp -t r5c-dependency-origins)
+STALE_PYTHON_PACKAGES=$(mktemp -t r5c-stale-python)
+cleanup_dependency_files()
+{
+	rm -f "${DEPENDENCY_ORIGINS}" "${STALE_PYTHON_PACKAGES}"
+}
+trap cleanup_dependency_files 0 1 2 15
+
+make -C "${UBOOT_PORT}" all-depends-list | \
+    sed "s#^${ROOTDIR}/ports/##" | sort -u > "${DEPENDENCY_ORIGINS}"
+pkg query '%n %o %a' | while read -r PACKAGE ORIGIN AUTOMATIC; do
+	case "${PACKAGE}" in
+	py[0-9][0-9][0-9]-*)
+		case "${PACKAGE}" in
+		"${PYTHON_PREFIX}"*) continue ;;
+		esac
+		if [ "${AUTOMATIC}" = 1 ] && \
+		    grep -Fqx "${ORIGIN}" "${DEPENDENCY_ORIGINS}"; then
+			printf '%s\n' "${PACKAGE}" >> "${STALE_PYTHON_PACKAGES}"
+		fi
+		;;
+	esac
+done
+
+if [ -s "${STALE_PYTHON_PACKAGES}" ]; then
+	echo "Removing obsolete automatic Python build flavors:"
+	sed 's/^/  /' "${STALE_PYTHON_PACKAGES}"
+	# Package names cannot contain whitespace; intentional field splitting
+	# passes the generated list as individual pkg-delete arguments.
+	# shellcheck disable=SC2046
+	pkg delete -y $(cat "${STALE_PYTHON_PACKAGES}")
+fi
+cleanup_dependency_files
+trap - 0 1 2 15
+
 if pkg info -e u-boot-nanopi-r5c; then
-	make -C "${ROOTDIR}/ports/sysutils/u-boot-nanopi-r5c" reinstall clean
+	make -C "${UBOOT_PORT}" reinstall clean
 else
-	make -C "${ROOTDIR}/ports/sysutils/u-boot-nanopi-r5c" install clean
+	make -C "${UBOOT_PORT}" install clean
 fi
 
 # Legacy R5S boot bits, uncomment if still needed

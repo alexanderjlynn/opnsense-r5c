@@ -29,13 +29,19 @@ echo "==> Installing the UTM guest agent"
 if ! pkg -N >/dev/null 2>&1; then
 	ASSUME_ALWAYS_YES=yes pkg bootstrap -f
 fi
-pkg install -y qemu-guest-agent
+GUEST_AGENT_READY=yes
+if ! pkg install -y qemu-guest-agent; then
+	echo "WARNING: qemu-guest-agent installation failed; continuing with SSH." >&2
+	GUEST_AGENT_READY=no
+fi
 
-echo "==> Enabling SSH and the UTM guest agent"
+echo "==> Enabling SSH"
 sysrc sshd_enable=YES
-sysrc qemu_guest_agent_enable=YES
-sysrc qemu_guest_agent_flags="-d -v -l /var/log/qemu-ga.log"
-sysrc -f /boot/loader.conf virtio_console_load=YES
+if [ "${GUEST_AGENT_READY}" = yes ]; then
+	sysrc qemu_guest_agent_enable=YES
+	sysrc qemu_guest_agent_flags="-d -v -l /var/log/qemu-ga.log"
+	sysrc -f /boot/loader.conf virtio_console_load=YES
+fi
 
 SSHD_CONFIG=/etc/ssh/sshd_config
 SSHD_BACKUP=/etc/ssh/sshd_config.before-r5c-build
@@ -60,22 +66,25 @@ set_sshd_option PermitRootLogin yes
 set_sshd_option PasswordAuthentication yes
 /usr/sbin/sshd -t
 
-kldload virtio_console >/dev/null 2>&1 || true
 if service sshd status >/dev/null 2>&1; then
 	service sshd restart
 else
 	service sshd start
 fi
-if service qemu-guest-agent status >/dev/null 2>&1; then
-	service qemu-guest-agent restart
-else
-	service qemu-guest-agent start
+if [ "${GUEST_AGENT_READY}" = yes ]; then
+	kldload virtio_console >/dev/null 2>&1 || true
+	if service qemu-guest-agent status >/dev/null 2>&1; then
+		if ! service qemu-guest-agent restart; then
+			echo "WARNING: the UTM guest agent did not restart; use the printed IP address." >&2
+		fi
+	elif ! service qemu-guest-agent start; then
+		echo "WARNING: the UTM guest agent did not start; use the printed IP address." >&2
+	fi
 fi
 
 echo
 echo "FreeBSD VM initialization complete."
-echo "UTM should now be able to discover this VM automatically."
-echo "If it cannot, pass one of these addresses to build-r5c-utm.sh --host:"
+echo "Use one of these addresses as the final build-r5c-utm.sh argument:"
 ifconfig -a | awk '$1 == "inet" && $2 !~ /^127\./ { print "  " $2 }'
 echo
-echo "Keep this VM running, then launch ./build-r5c-utm.sh on the Mac."
+echo "Example on the Mac: ./build-r5c-utm.sh 26.7.4 IP_ADDRESS"

@@ -57,7 +57,7 @@ done
 
 if [ "${SKIP_RELEASE_CHECK:-no}" != "yes" ]; then
 	echo "==> Verifying OPNsense ${OPNSENSE_RELEASE} source tags"
-	for REPOSITORY in src core plugins ports; do
+	for REPOSITORY in tools src core plugins ports; do
 		if ! git ls-remote --exit-code --tags \
 		    "https://github.com/opnsense/${REPOSITORY}.git" \
 		    "refs/tags/${OPNSENSE_RELEASE}" >/dev/null 2>&1; then
@@ -121,4 +121,3 @@ CURRENT_STAGE=complete
 printf 'complete all\n' > "${STATUS_FILE}"
 echo
 echo "R5C build completed for OPNsense ${OPNSENSE_RELEASE}."
-
