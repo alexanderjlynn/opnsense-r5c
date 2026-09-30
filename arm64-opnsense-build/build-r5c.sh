@@ -8,28 +8,57 @@ cd "${SCRIPT_DIR}"
 usage()
 {
 	cat <<'EOF'
-Usage: sh build-r5c.sh [OPNSENSE_RELEASE]
+Usage: sh build-r5c.sh [--diagnostic] [OPNSENSE_RELEASE]
 
 Run every R5C build stage in order without interactive confirmations.
 The default release is defined in env.sh.  Example:
 
     sh build-r5c.sh 26.7.4
+
+--diagnostic builds R5C_DIAG instead of R5C_UBOOT.  That image is for a
+short SD-card boot test: U-Boot lights LEDs, writes R5CUBOOT.OK to the FAT
+partition, and records R5CBOOT.FAIL if EFI returns instead of booting.
 EOF
 }
 
-case "${1:-}" in
--h|--help)
-	usage
-	exit 0
+R5C_DIAGNOSTIC=${R5C_DIAGNOSTIC:-no}
+OPNSENSE_RELEASE_ARG=
+while [ "$#" -gt 0 ]; do
+	case "$1" in
+	--diagnostic)
+		R5C_DIAGNOSTIC=yes
+		;;
+	-h|--help)
+		usage
+		exit 0
+		;;
+	-*)
+		echo "Unknown option: $1" >&2
+		usage >&2
+		exit 2
+		;;
+	*)
+		if [ -n "${OPNSENSE_RELEASE_ARG}" ]; then
+			usage >&2
+			exit 2
+		fi
+		OPNSENSE_RELEASE_ARG=$1
+		;;
+	esac
+	shift
+done
+
+case "${R5C_DIAGNOSTIC}" in
+yes) R5C_DEVICE=R5C_DIAG ;;
+no) R5C_DEVICE=R5C_UBOOT ;;
+*)
+	echo "R5C_DIAGNOSTIC must be yes or no." >&2
+	exit 2
 	;;
 esac
 
-if [ "$#" -gt 1 ]; then
-	usage >&2
-	exit 2
-fi
-
-OPNSENSE_RELEASE=${1:-${OPNSENSE_RELEASE:-}}
+OPNSENSE_RELEASE=${OPNSENSE_RELEASE_ARG:-${OPNSENSE_RELEASE:-}}
+export R5C_DIAGNOSTIC
 export OPNSENSE_RELEASE
 . ./env.sh
 
@@ -109,15 +138,18 @@ run_stage 1.2-fingerprint sh ./1.2-fingerprint.sh
 run_stage 1.3-git_local_files sh ./1.3-git_local_files.sh
 run_stage 1.4-edit_conf_files sh ./1.4-edit_conf_files.sh
 run_stage 2-base sh ./2-base.sh
-run_stage 3-kernel sh ./3-kernel.sh
+run_stage 3-kernel sh ./3-kernel.sh "${R5C_DEVICE}"
 run_stage 4-ports sh ./4-ports.sh
 run_stage 5-plugins sh ./5-plugins.sh
 run_stage 6-core sh ./6-core.sh
 run_stage 7-packages sh ./7-packages.sh
 run_stage 8-sign sh ./8-sign.sh
-run_stage 9-arm sh ./9-arm.sh R5C_UBOOT
+run_stage 9-arm sh ./9-arm.sh "${R5C_DEVICE}"
+
+IMAGE="/usr/local/opnsense/build/${VERSION}/aarch64/images/OPNsense-${OPNSENSE_RELEASE}-arm-aarch64-${R5C_DEVICE}.img"
+run_stage verify-image sh ./verify-r5c-dtb.sh image "${IMAGE}"
 
 CURRENT_STAGE=complete
 printf 'complete all\n' > "${STATUS_FILE}"
 echo
-echo "R5C build completed for OPNsense ${OPNSENSE_RELEASE}."
+echo "R5C build completed for OPNsense ${OPNSENSE_RELEASE} (${R5C_DEVICE})."

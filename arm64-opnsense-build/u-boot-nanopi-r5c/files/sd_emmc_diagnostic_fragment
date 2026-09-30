@@ -1,0 +1,14 @@
+# Diagnostic SD/eMMC build for boards without UART access.  Before EFI runs:
+# - turn on the red power and green LAN LEDs (GPIO3_A2/A3 => 98/99)
+# - write R5CUBOOT.OK after U-Boot can access the FAT partition
+# - scan only local SD/eMMC boot devices, without probing unsupported NICs
+# - write R5CSCAN.OK after the non-booting scan completes
+# - write R5CEFI.OK after selecting a valid flow, immediately before booting it
+# - write R5CBOOT.FAIL if no valid flow exists or the EFI application returns
+# Keeping scan and boot separate gives a no-UART test four distinct firmware
+# checkpoints.  Failures of an individual marker command are non-fatal.
+# CONFIG_NVME is not set
+# CONFIG_NVME_PCI is not set
+# CONFIG_CMD_NVME is not set
+CONFIG_BOOTDELAY=2
+CONFIG_BOOTCOMMAND="gpio set 98; gpio set 99; mw.b ${loadaddr} 0x52 1; fatwrite mmc 1:1 ${loadaddr} R5CUBOOT.OK 1; fatwrite mmc 0:1 ${loadaddr} R5CUBOOT.OK 1; setenv boot_targets mmc1 mmc0; bootflow scan -lG; fatwrite mmc 1:1 ${loadaddr} R5CSCAN.OK 1; fatwrite mmc 0:1 ${loadaddr} R5CSCAN.OK 1; if bootflow select 0; then fatwrite mmc 1:1 ${loadaddr} R5CEFI.OK 1; fatwrite mmc 0:1 ${loadaddr} R5CEFI.OK 1; bootflow boot; fi; fatwrite mmc 1:1 ${loadaddr} R5CBOOT.FAIL 1; fatwrite mmc 0:1 ${loadaddr} R5CBOOT.FAIL 1; gpio set 100; sleep 10; reset"

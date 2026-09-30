@@ -1,3 +1,7 @@
+# FUTURE/INACTIVE: this fragment is deliberately not selected by the port.
+# Revisit only after the SD/eMMC R5C boot chain is stable.  Enabling it also
+# requires restoring the pcie2x1 node in freebsd-r5c/rk3568-nanopi-r5c.dts
+# and adding nvme to the U-Boot boot target order.
 CONFIG_NVME=y
 CONFIG_NVME_PCI=y
 CONFIG_CMD_NVME=y

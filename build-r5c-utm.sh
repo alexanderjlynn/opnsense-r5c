@@ -16,6 +16,9 @@ UTM_ARTIFACT_DIR=${UTM_ARTIFACT_DIR:-}
 UTMCTL=${UTMCTL:-/Applications/UTM.app/Contents/MacOS/utmctl}
 RELEASE=
 KEEP_RAW=no
+EMMC_IMAGE=no
+BOOT_ONLY=no
+DIAGNOSTIC=no
 SSH_STATE_DIR=
 CONTROL_PATH=
 PARTIAL_FILE=
@@ -26,8 +29,8 @@ usage()
 	cat <<EOF
 Usage: ./build-r5c-utm.sh [options] [OPNSENSE_RELEASE [GUEST_IP]]
 
-Start a UTM FreeBSD VM, copy this checkout into it, run all R5C build stages,
-and copy a compressed image back to macOS.  The default is ${DEFAULT_RELEASE}.
+Start a UTM FreeBSD VM, copy this checkout into it, run a full or cached R5C
+build, and copy a compressed image back to macOS.  The default is ${DEFAULT_RELEASE}.
 
 The simplest reliable form when the VM prints its address is:
 
@@ -41,6 +44,9 @@ Options:
   --identity FILE    SSH private key
   --artifact-dir DIR Store the finished image here
   --keep-raw         Also copy the uncompressed .img (useful for flashing)
+  --emmc-image       Also create an eMMC Tools-compatible .img.gz
+  --boot-only        Reuse a completed same-release build; rebuild boot chain
+  --diagnostic       Build R5C_DIAG with pre-EFI LED/FAT markers
   -h, --help         Show this help
 
 Environment variables with the same names as the defaults above are also
@@ -112,6 +118,18 @@ while [ "$#" -gt 0 ]; do
 		KEEP_RAW=yes
 		shift
 		;;
+	--emmc-image)
+		EMMC_IMAGE=yes
+		shift
+		;;
+	--boot-only)
+		BOOT_ONLY=yes
+		shift
+		;;
+	--diagnostic)
+		DIAGNOSTIC=yes
+		shift
+		;;
 	-h|--help)
 		usage
 		exit 0
@@ -167,7 +185,7 @@ fi
 [ "$(uname -m)" = arm64 ] || die "this launcher expects an Apple-silicon Mac"
 [ -x "${UTMCTL}" ] || die "utmctl was not found at ${UTMCTL}"
 [ -d "${BUILD_DIR}" ] || die "arm64-opnsense-build was not found beside this script"
-for REQUIRED_COMMAND in awk caffeinate mktemp nc shasum ssh stat tar tee; do
+for REQUIRED_COMMAND in awk caffeinate gzip mktemp nc shasum ssh stat tar tee; do
 	command -v "${REQUIRED_COMMAND}" >/dev/null 2>&1 || die "required macOS command is missing: ${REQUIRED_COMMAND}"
 done
 
@@ -270,17 +288,31 @@ COPYFILE_DISABLE=1 tar -C "${SCRIPT_DIR}" --exclude=.git \
 # pipefail preserve the complete diagnostic output on macOS without hiding the
 # remote build's exit status, so a failed unattended run remains actionable.
 SERIES=$(printf '%s\n' "${RELEASE}" | awk -F. '{ print $1 "." $2 }')
-IMAGE_BASENAME="OPNsense-${RELEASE}-arm-aarch64-R5C_UBOOT.img"
+if [ "${DIAGNOSTIC}" = yes ]; then
+	R5C_DEVICE=R5C_DIAG
+	DIAGNOSTIC_OPTION="--diagnostic "
+else
+	R5C_DEVICE=R5C_UBOOT
+	DIAGNOSTIC_OPTION=
+fi
+if [ "${BOOT_ONLY}" = yes ]; then
+	REMOTE_RUNNER=rebuild-r5c-boot.sh
+	BUILD_KIND=boot-only
+else
+	REMOTE_RUNNER=build-r5c.sh
+	BUILD_KIND=full
+fi
+IMAGE_BASENAME="OPNsense-${RELEASE}-arm-aarch64-${R5C_DEVICE}.img"
 REMOTE_IMAGE_DIR="/usr/local/opnsense/build/${SERIES}/aarch64/images"
 REMOTE_IMAGE="${REMOTE_IMAGE_DIR}/${IMAGE_BASENAME}"
 ARTIFACT_DIR=${UTM_ARTIFACT_DIR:-${SCRIPT_DIR}/build-artifacts/${RELEASE}}
-BUILD_LOG="${ARTIFACT_DIR}/build-${RELEASE}.log"
+BUILD_LOG="${ARTIFACT_DIR}/build-${RELEASE}-${R5C_DEVICE}-${BUILD_KIND}.log"
 mkdir -p "${ARTIFACT_DIR}"
 
-echo "==> Starting the complete R5C build for OPNsense ${RELEASE}"
+echo "==> Starting the ${BUILD_KIND} ${R5C_DEVICE} build for OPNsense ${RELEASE}"
 echo "==> The VM will remain running when the build finishes or fails."
 ssh "${SSH_OPTIONS[@]}" "${SSH_TARGET}" \
-    "cd '${UTM_REMOTE_DIR}/arm64-opnsense-build' && exec sh ./build-r5c.sh '${RELEASE}'" \
+    "cd '${UTM_REMOTE_DIR}/arm64-opnsense-build' && exec sh './${REMOTE_RUNNER}' ${DIAGNOSTIC_OPTION}'${RELEASE}'" \
     2>&1 | tee "${BUILD_LOG}"
 
 if [ "${KEEP_RAW}" = yes ]; then
@@ -299,6 +331,24 @@ ssh "${SSH_OPTIONS[@]}" "${SSH_TARGET}" \
 mv "${PARTIAL_FILE}" "${ARTIFACT_DIR}/${IMAGE_BASENAME}.xz"
 PARTIAL_FILE=
 
+# FriendlyWrt's eMMC Tools recognizes a gzip-compressed whole-disk image by
+# its .img.gz suffix.  A normal ZIP archive takes a different code path that
+# expects a FriendlyELEC partition bundle containing parameter.txt/partmap.txt.
+if [ "${EMMC_IMAGE}" = yes ]; then
+	echo "==> Creating the FriendlyWrt eMMC Tools image"
+	PARTIAL_FILE="${ARTIFACT_DIR}/${IMAGE_BASENAME}.gz.partial"
+	ssh "${SSH_OPTIONS[@]}" "${SSH_TARGET}" \
+	    "test -s '${REMOTE_IMAGE}' && exec gzip -9 -c '${REMOTE_IMAGE}'" \
+	    > "${PARTIAL_FILE}"
+	gzip -t "${PARTIAL_FILE}"
+	mv "${PARTIAL_FILE}" "${ARTIFACT_DIR}/${IMAGE_BASENAME}.gz"
+	PARTIAL_FILE=
+	(
+		cd "${ARTIFACT_DIR}"
+		shasum -a 256 "${IMAGE_BASENAME}.gz" > "${IMAGE_BASENAME}.gz.sha256"
+	)
+fi
+
 PARTIAL_FILE="${ARTIFACT_DIR}/${IMAGE_BASENAME}.sig.partial"
 ssh "${SSH_OPTIONS[@]}" "${SSH_TARGET}" \
     "test -s '${REMOTE_IMAGE}.sig' && cat '${REMOTE_IMAGE}.sig'" \
@@ -314,6 +364,12 @@ ASSET_SIZE=$(stat -f %z "${ARTIFACT_DIR}/${IMAGE_BASENAME}.xz")
 if [ "${ASSET_SIZE}" -ge 2147483648 ]; then
 	echo "WARNING: the compressed image is at least 2 GiB and cannot be uploaded as one GitHub release asset." >&2
 fi
+if [ "${EMMC_IMAGE}" = yes ]; then
+	EMMC_ASSET_SIZE=$(stat -f %z "${ARTIFACT_DIR}/${IMAGE_BASENAME}.gz")
+	if [ "${EMMC_ASSET_SIZE}" -ge 2000000000 ]; then
+		echo "WARNING: the .img.gz is at least 2,000,000,000 bytes and may exceed the eMMC Tools upload limit." >&2
+	fi
+fi
 
 echo
 echo "Build and transfer complete:"
@@ -324,6 +380,12 @@ OUTPUT_FILES=(
 )
 if [ "${KEEP_RAW}" = yes ]; then
 	OUTPUT_FILES+=("${ARTIFACT_DIR}/${IMAGE_BASENAME}")
+fi
+if [ "${EMMC_IMAGE}" = yes ]; then
+	OUTPUT_FILES+=(
+		"${ARTIFACT_DIR}/${IMAGE_BASENAME}.gz"
+		"${ARTIFACT_DIR}/${IMAGE_BASENAME}.gz.sha256"
+	)
 fi
 ls -lh "${OUTPUT_FILES[@]}"
 echo "Build log: ${BUILD_LOG}"

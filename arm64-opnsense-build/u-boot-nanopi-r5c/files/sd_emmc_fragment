@@ -1,0 +1,8 @@
+# Initial R5C support intentionally boots from SD/eMMC only.  Limiting the
+# runtime targets also avoids initializing optional storage while the board
+# port is being proven.
+# CONFIG_NVME is not set
+# CONFIG_NVME_PCI is not set
+# CONFIG_CMD_NVME is not set
+CONFIG_BOOTDELAY=2
+CONFIG_BOOTCOMMAND="setenv boot_targets mmc1 mmc0; bootflow scan -lb"

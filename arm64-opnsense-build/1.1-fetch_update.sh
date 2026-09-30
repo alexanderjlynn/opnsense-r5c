@@ -23,6 +23,17 @@ else
 	git clone --depth=1 https://github.com/opnsense/tools.git "${ROOTDIR}/tools"
 fi
 
+# Remove only this repository's prior generated source edits before the
+# upstream updater checks out the exact tag.  No unrelated source changes are
+# touched.
+sh ./apply-r5c-source.sh --clean
+for TOOLS_PATH in build/arm.sh "config/${VERSION}/extras.conf"; do
+	if git -C "${ROOTDIR}/tools" ls-files --error-unmatch \
+	    "${TOOLS_PATH}" >/dev/null 2>&1; then
+		git -C "${ROOTDIR}/tools" checkout -- "${TOOLS_PATH}"
+	fi
+done
+
 # Fetch every source tree at the requested point release.  Passing VERSION is
 # essential: without it, update follows the release branches (for example the
 # initial 26.7 tag) while the later stages label the output as 26.7.4.
@@ -50,8 +61,7 @@ done
 # match.  Older versions of this script did not write a manifest and could
 # accidentally label branch-tip (for example 26.7) output as a point release
 # (for example 26.7.4), so invalidate unverified cached output as well.
-SETS_DIR=$(make -C "${ROOTDIR}/tools" VERSION="${TAG_SRC}" \
-    DEVICE="${DEVICE}" -V SETSDIR)
+SETS_DIR="/usr/local/opnsense/build/${VERSION}/aarch64/sets"
 STALE_OUTPUT=no
 if [ -f "${SOURCE_MANIFEST}" ]; then
 	if ! cmp -s "${SOURCE_MANIFEST}" "${SOURCE_MANIFEST_NEW}"; then
@@ -131,7 +141,21 @@ fi
 cd "${CURRENT_DIR}"
 
 echo "Copy R5C conf files"
-cp "${SRC_DIR}/R5C_UBOOT.conf" "${SRC_DIR}/R5C_USB.conf" "${ROOTDIR}/tools/device"
+cp "${SRC_DIR}/R5C_UBOOT.conf" "${SRC_DIR}/R5C_DIAG.conf" \
+    "${SRC_DIR}/R5C_USB.conf" "${ROOTDIR}/tools/device"
+
+# FreeBSD 15.1 ships the R5S DTB but omits the closely related R5C DTB.
+# Install the upstream R5C description and register it in the Rockchip DTB
+# module.  The local copy intentionally disables only the optional M.2 lane;
+# both PCIe controllers used by the onboard RTL8125B NICs remain enabled.
+sh ./apply-r5c-source.sh
+
+# Add a more useful failure message to the original R5S-compatible Realtek
+# driver.  If a future RTL8125 revision is not recognized, the SD diagnostic
+# log will include the TXCFG value needed to identify it rather than only
+# saying "unknown device".
+echo "Install R5C diagnostics for net/realtek-re-kmod198"
+cp -R realtek-re-kmod198/. "${ROOTDIR}/ports/net/realtek-re-kmod198/"
 
 # Legacy R5S/OP5P targets, uncomment if still needed
 #cp $SRC_DIR/R5S_USB.conf $SRC_DIR/R5S_UBOOT.conf $SRC_DIR/R5S_EDK2.conf $SRC_DIR/OP5P_MBR.conf /usr/tools/device
