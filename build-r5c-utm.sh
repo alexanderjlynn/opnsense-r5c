@@ -19,6 +19,7 @@ KEEP_RAW=no
 EMMC_IMAGE=no
 BOOT_ONLY=no
 DIAGNOSTIC=no
+ARM_REPOSITORY=${ARM_REPOSITORY:-walker}
 SSH_STATE_DIR=
 CONTROL_PATH=
 PARTIAL_FILE=
@@ -47,6 +48,8 @@ Options:
   --emmc-image       Also create an eMMC Tools-compatible .img.gz
   --boot-only        Reuse a completed same-release build; rebuild boot chain
   --diagnostic       Build R5C_DIAG with pre-EFI LED/FAT markers
+  --arm-repository R Runtime package/update repository: walker or none
+                     (default: ${ARM_REPOSITORY})
   -h, --help         Show this help
 
 Environment variables with the same names as the defaults above are also
@@ -130,6 +133,11 @@ while [ "$#" -gt 0 ]; do
 		DIAGNOSTIC=yes
 		shift
 		;;
+	--arm-repository)
+		[ "$#" -ge 2 ] || die "--arm-repository requires walker or none"
+		ARM_REPOSITORY=$2
+		shift 2
+		;;
 	-h|--help)
 		usage
 		exit 0
@@ -166,6 +174,10 @@ case "${RELEASE}" in
 esac
 case "${UTM_SSH_PORT}" in
 ''|*[!0-9]*) die "invalid SSH port: ${UTM_SSH_PORT}" ;;
+esac
+case "${ARM_REPOSITORY}" in
+walker|none) ;;
+*) die "invalid ARM repository '${ARM_REPOSITORY}'; expected walker or none" ;;
 esac
 [ "${UTM_GUEST_USER}" = root ] || die "the OPNsense tools require root; use --user root"
 case "${UTM_REMOTE_DIR}" in
@@ -312,7 +324,7 @@ mkdir -p "${ARTIFACT_DIR}"
 echo "==> Starting the ${BUILD_KIND} ${R5C_DEVICE} build for OPNsense ${RELEASE}"
 echo "==> The VM will remain running when the build finishes or fails."
 ssh "${SSH_OPTIONS[@]}" "${SSH_TARGET}" \
-    "cd '${UTM_REMOTE_DIR}/arm64-opnsense-build' && exec sh './${REMOTE_RUNNER}' ${DIAGNOSTIC_OPTION}'${RELEASE}'" \
+    "cd '${UTM_REMOTE_DIR}/arm64-opnsense-build' && exec sh './${REMOTE_RUNNER}' ${DIAGNOSTIC_OPTION}--arm-repository '${ARM_REPOSITORY}' '${RELEASE}'" \
     2>&1 | tee "${BUILD_LOG}"
 
 if [ "${KEEP_RAW}" = yes ]; then

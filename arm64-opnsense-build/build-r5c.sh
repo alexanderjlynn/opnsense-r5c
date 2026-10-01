@@ -8,7 +8,7 @@ cd "${SCRIPT_DIR}"
 usage()
 {
 	cat <<'EOF'
-Usage: sh build-r5c.sh [--diagnostic] [OPNSENSE_RELEASE]
+Usage: sh build-r5c.sh [--diagnostic] [--arm-repository walker|none] [OPNSENSE_RELEASE]
 
 Run every R5C build stage in order without interactive confirmations.
 The default release is defined in env.sh.  Example:
@@ -18,15 +18,28 @@ The default release is defined in env.sh.  Example:
 --diagnostic builds R5C_DIAG instead of R5C_UBOOT.  That image is for a
 short SD-card boot test: U-Boot lights LEDs, writes R5CUBOOT.OK to the FAT
 partition, and records R5CBOOT.FAIL if EFI returns instead of booting.
+
+--arm-repository selects the runtime package/update repository.  "walker"
+(the default) enables a pinned community aarch64 repository for firmware and
+plugin installation; "none" leaves the image without an ARM package mirror.
 EOF
 }
 
 R5C_DIAGNOSTIC=${R5C_DIAGNOSTIC:-no}
+ARM_REPOSITORY=${ARM_REPOSITORY:-walker}
 OPNSENSE_RELEASE_ARG=
 while [ "$#" -gt 0 ]; do
 	case "$1" in
 	--diagnostic)
 		R5C_DIAGNOSTIC=yes
+		;;
+	--arm-repository)
+		[ "$#" -ge 2 ] || {
+			echo "--arm-repository requires walker or none" >&2
+			exit 2
+		}
+		ARM_REPOSITORY=$2
+		shift
 		;;
 	-h|--help)
 		usage
@@ -60,6 +73,7 @@ esac
 OPNSENSE_RELEASE=${OPNSENSE_RELEASE_ARG:-${OPNSENSE_RELEASE:-}}
 export R5C_DIAGNOSTIC
 export OPNSENSE_RELEASE
+export ARM_REPOSITORY
 . ./env.sh
 
 if [ "$(id -u)" -ne 0 ]; then
@@ -140,6 +154,20 @@ run_stage 1.4-edit_conf_files sh ./1.4-edit_conf_files.sh
 run_stage 2-base sh ./2-base.sh
 run_stage 3-kernel sh ./3-kernel.sh "${R5C_DEVICE}"
 run_stage 4-ports sh ./4-ports.sh
+# OPNsense's ports stamp tracks source commits but not changes to ports.conf.
+# A reused package set can therefore be declared up to date even when the
+# matched plugin list now references packages that were never built.  Refresh
+# the R5C diagnostic packages and the service packages required by the Zabbix
+# plugin flavors that exposed this gap.  4-ports.sh retains the complete
+# repository and invalidates only these origins.
+run_stage 4.1-r5c-required-ports sh ./4-ports.sh \
+    benchmarks/iperf3 \
+    net/realtek-re-kmod \
+    net/realtek-re-kmod198 \
+    net-mgmt/zabbix7-agent \
+    net-mgmt/zabbix7-proxy \
+    net-mgmt/zabbix74-agent \
+    net-mgmt/zabbix74-proxy
 run_stage 5-plugins sh ./5-plugins.sh
 run_stage 6-core sh ./6-core.sh
 run_stage 7-packages sh ./7-packages.sh

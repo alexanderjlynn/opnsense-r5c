@@ -36,8 +36,13 @@ done
 
 # Fetch every source tree at the requested point release.  Passing VERSION is
 # essential: without it, update follows the release branches (for example the
-# initial 26.7 tag) while the later stages label the output as 26.7.4.
-make -C "${ROOTDIR}/tools" VERSION="${TAG_SRC}" DEVICE="${DEVICE}" update
+# initial 26.7 tag) while the later stages label the output as 26.7.4.  A
+# boot-only rebuild may run after a temporary VM loses Internet access.  Allow
+# the existing exact-tag verification below to decide whether cached sources
+# are safe in that case; it still rejects any missing tag or mismatched HEAD.
+if ! make -C "${ROOTDIR}/tools" VERSION="${TAG_SRC}" DEVICE="${DEVICE}" update; then
+	echo "Source update failed; checking whether every local checkout is already at exact tag ${TAG_SRC}." >&2
+fi
 
 # Fail here, before an hours-long build, if any checkout does not match the
 # exact tag selected by the user.
