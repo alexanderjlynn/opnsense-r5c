@@ -127,6 +127,8 @@ Do not apply an in-place system update to an R5C solely because the GUI offers o
 
 No signing key is downloaded while assembling the image: the reviewed fingerprint is stored in `env.sh`, validated, and written into the image together with the mirror setting. A new OPNsense release series intentionally fails until its repository fingerprint is reviewed and added. This prevents a future image from silently trusting an old or unknown key.
 
+OPNsense normally obtains changelog and bogons URLs with `opnsense-update -X`. For a non-subscription community mirror, that option deliberately selects the official sample repository, whose `FreeBSD:15:aarch64` tree does not exist. R5C builds using Walker therefore change only those two signed auxiliary downloads to `opnsense-update -M`, which follows the configured ARM mirror. Package metadata, changelog, and bogons sets then use the same aarch64 release tree and retain OPNsense signature verification.
+
 Disable the community repository when building an offline image or when supplying your own repository later:
 
 ```sh
@@ -140,6 +142,12 @@ The default is equivalent to:
 ```
 
 The same option is accepted by `arm64-opnsense-build/build-r5c.sh` and `rebuild-r5c-boot.sh` inside the FreeBSD build guest. Repository support does not make every plugin portable: a plugin is available only when the repository contains the plugin package and all of its aarch64 service dependencies. In the Plugins page, enable **Show community plugins** to include the lower support tiers documented by [OPNsense](https://docs.opnsense.org/manual/firmware.html#plugins).
+
+### Stable R5C Ethernet addresses
+
+The RTL8125B controllers on the tested R5C report EEPROM addresses of `00:00:00:00:00:00`; FriendlyELEC's own R5C device tree also initializes both PCI NIC address fields to zero. The Realtek 1.98 driver consequently logs `Random ether addr` and otherwise creates a different address on every boot. There is no valid burned NIC address for FreeBSD to restore.
+
+At the beginning of OPNsense startup, R5C images now preserve any genuine hardware address reported by a future board revision. Only when the driver explicitly reports its random fallback do they derive a stable local-unicast address for each port from U-Boot's board-specific SMBIOS hardware serial. Different boards and ports receive different addresses, and the result is stable across reboots without baking one shared address into the image. The selected values and source are recorded in `/var/run/r5c-stable-mac`; diagnostic images also write `R5CMAC.TXT` to the FAT partition. An explicitly configured OPNsense spoof/virtual MAC is applied later and continues to take precedence.
 
 For the first corrected boot test, reuse the completed 26.7.4 build in the existing VM and build the diagnostic image:
 
@@ -283,6 +291,8 @@ The wrapper exits on the first real error. Re-run the same Mac command after cor
 - **A compile line appears stuck:** LLVM, Rust, OpenSSL, Perl, and link steps can be quiet for ten minutes or longer. In another SSH session run `top -aSH` or `ps auxww` and wait while compiler/linker processes are using CPU. Treat it as hung only after activity and disk usage have stopped for a sustained period.
 - **`pkg` port fails during parallel targets:** stage 1.1 intentionally runs the ports framework's clean/build/reinstall targets serially; the port's own build may still use multiple CPUs.
 - **Plugin stage says `Could not find package`:** the generated ports and plugin lists were out of sync, so a plugin could request a service package that stage 4 never built. Stage 1.4 installs the reviewed `ports.conf` and `plugins.conf` as a matched pair. Because OPNsense's normal ports stamp tracks source revisions rather than configuration contents, the full wrapper also refreshes the R5C diagnostic packages and missing Zabbix service origins explicitly before plugins run. Do not bypass the dependency or mix an amd64 repository into the ARM build; rerun the same command and the valid existing package repository will be reused.
+- **Firmware check tries `pkg.opnsense.org/FreeBSD:15:aarch64/.../changelog.txz`:** plugin/package access may already be working; the changelog is a separate signed auxiliary fetch. OPNsense's `-X` mirror selection falls back to the official sample repository for community mirrors, and that official aarch64 path does not exist. Images built after v0.1.1 route the changelog and bogons downloads through the configured Walker release URL with `-M` while keeping signature verification.
+- **MAC addresses change after every reboot:** confirm that `dmesg` contains `Invalid ether addr: 00:00:00:00:00:00` followed by `Random ether addr`. Images built after v0.1.1 replace only that driver-generated fallback with stable board-derived addresses before OPNsense configures the interfaces. Check `/var/run/r5c-stable-mac` or `R5CMAC.TXT`. A MAC entered in the OPNsense interface settings intentionally overrides this default.
 - **Disk-space warning:** 50 GiB free is the minimum preflight threshold, not a comfortable allocation. A 100 GB UTM disk is recommended. Increase the virtual disk before retrying if `/usr` is nearly full.
 - **Build failed and the important line scrolled away:** inspect `build-artifacts/VERSION/build-VERSION.log` on the Mac and `/root/opnsense-dev/build.VERSION.status` in the VM. The latter names the failed numbered stage.
 - **Build succeeded but transfer failed:** leave the VM running and re-run the launcher, or copy the raw image with the SSH command in the installation section below. Do not delete the VM until the Mac checksum passes.
@@ -427,6 +437,7 @@ This is a recovery/production option, but it is not the recommended direct-Mac r
 
 ## News
 
+- 2026-10-01: Published v0.1.1 after physical validation of complete boot, both RTL8125B links at `1000baseT full-duplex`, restored routed performance, and ARM64 plugin installation. Post-release work routes signed changelog/bogons downloads through the selected ARM mirror and replaces the driver's per-boot random MAC fallback with stable per-board, per-port addresses derived from the hardware serial.
 - 2026-10-01: The 1102.01 test proved both RTL8125B devices attach, advertise `2500Base-T`, and negotiate a connected 1Gb peer, but OPNsense did not reach LAN assignment or DHCP. The diagnostic image has returned to the previously boot-tested 1.98 driver while keeping the corrected PCIe mappings, maximum-frequency request, and `iperf3`. Boot diagnostics now clear stale attempt data, add per-function `R5CPHASE.TXT` boundaries, and capture wait channels, kernel stacks, open files, configuration, and OPNsense/configd logs.
 - 2026-09-30: The first 1102.01 hardware boot reached FreeBSD with both RTL8125B controllers attached through the corrected PCIe mappings, and `re1` negotiated `1000baseT` with the connected 1Gb peer. OPNsense stopped between `R5CPHP.OK` and completion of `rc.bootup`, before assigning LAN IPv4 or starting the Web UI; this explains why a manual client address could not ping the board. Diagnostic images now save all `rc.bootup` output and run a four-minute watchdog with timed process, media, route, socket, driver, and kernel snapshots. The boot-only builder now validates the selected driver in the cached package set instead of mutating the build host by reinstalling ports.
 - 2026-09-30: The first live performance capture proved that both RTL8125B links remained at `1000baseT`, neither interface accumulated errors or drops, temperatures stayed below 37 C, and the RK3568 remained fixed at 816 MHz under load. `R5C_DIAG` therefore installs `iperf3`, requests the 1992 MHz operating point, and records `R5CPERF.TXT` plus every advertised Ethernet media mode.
